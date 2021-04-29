@@ -1,4 +1,4 @@
-## AWS (WIP)
+## aws_templates (WIP)
 
 AWS scripts, cfn templates & misc files I've collated over time
 
