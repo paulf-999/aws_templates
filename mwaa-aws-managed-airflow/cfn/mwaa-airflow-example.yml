@@ -6,6 +6,8 @@ Description: >
     * S3 Bucket
     * and an AWS MWAA (Managed Workflows for Apache Airflow) environment
 
+    Follows the AWS user guide: https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html
+
 Parameters:
 
   EnvironmentName:
@@ -60,7 +62,10 @@ Parameters:
     Description: Log level for WebserverLogs
     Type: String
     Default: INFO
-
+  S3BucketName:
+    Type: String
+    Default: mwaa-airflow-example
+    
 Resources:
   #####################################################################################################################
   # CREATE VPC
@@ -238,6 +243,7 @@ Resources:
   EnvironmentBucket:
     Type: AWS::S3::Bucket
     Properties:
+      BucketName: !Ref S3BucketName
       VersioningConfiguration:
         Status: Enabled
       PublicAccessBlockConfiguration: 
