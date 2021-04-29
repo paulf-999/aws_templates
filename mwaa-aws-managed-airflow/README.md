@@ -1,6 +1,6 @@
 ## mwaa-awa-managed-airflow (WIP)
 
-Follows the following AWS user guide: https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html
+Follows the AWS quick start user guide for MWAA: https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html
 
 This template creates:
 * a VPC inftrastructure
