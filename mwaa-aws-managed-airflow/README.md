@@ -11,9 +11,10 @@ This template creates:
 
 The steps involved in building and executing this involve:
 
-1) Providing the name of your AWS_PROFILE to the variable `AWS_PROFILE`
-2) Providing the desired name of the S3 bucket to create
-3) and run `make`!
+1) At the top of the `makefile`, provide values for the variables:
+    * `AWS_PROFILE`: to indicate what AWS_PROFILE to use
+    * `S3_BUCKET`: to specify the name of the S3 bucket to create
+2) Following this, run the makefile by typing `make`!
 
 ### To do:
 
