@@ -56,10 +56,12 @@ Resources:
       Code:
         ZipFile:  |
           #!/usr/bin/env python3
-          """ Script to trigger moving of existing files in S3 bucket
-          to /archive folder
-
-          Python Version: 3.7
+          """
+          Python Version  : 3.7
+          * Name          : s3_event_lambda_trigger.py
+          * Description   : Boilerplate s3 event lambda_function script
+          * Created       : 26-02-2021
+          * Usage         : python3 s3_event_lambda_trigger.py
           """
 
           __author__ = "Paul Fry"
@@ -85,7 +87,7 @@ Resources:
           def lambda_handler(event, context):
               """ Main entry point of the lambda function """
               START_TIME = time()
-              logging.info("lambda_handler() function called")
+              logging.debug(f"Function called: lambda_handler()")
 
               #parse the desired event items
               bucket_name = event['Records'][0]['s3']['bucket']['name']
@@ -94,7 +96,7 @@ Resources:
 
               s3_bucket = s3_resource.Bucket(bucket_name)
 
-              logging.info("Finished lambda_handler() function in %s seconds", round(time() - START_TIME, 2))
+              logging.debug(f"Function finished: lambda_handler() finished in {round(time() - START_TIME, 2)} seconds")
   
   LambdaExecRole:
     Type: AWS::IAM::Role
