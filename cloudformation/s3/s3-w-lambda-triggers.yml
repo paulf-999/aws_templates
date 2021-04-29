@@ -1,0 +1,114 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+  S3 bucket with:
+  * versioning enabled
+  * encryption enabled
+  * event notifications ('ObjectCreated:Put') to invoke the lambda function
+
+Parameters:
+  LambdaFunctionName:
+    Type: String
+    Default: AuditExistingFile
+  S3BucketName:
+    Type: String
+    Default: edp-bucket-trigger-test
+  LambdaIAMRole:
+    Type: String
+    Default: edp-lambda-bucket-trigger-role
+  
+Resources:
+  S3EventTrigger:
+    Type: AWS::S3::Bucket
+    DependsOn: S3BucketPerm
+    Properties:
+      BucketName: !Ref S3BucketName
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: TRUE
+        BlockPublicPolicy: TRUE
+        IgnorePublicAcls: TRUE
+      VersioningConfiguration:
+        Status: Enabled
+      NotificationConfiguration:
+        LambdaConfigurations:
+        - Event: s3:ObjectCreated:Put
+          Function: !GetAtt LambdaFunc.Arn
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  S3BucketPerm:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LambdaFunc
+      Principal: s3.amazonaws.com
+  
+  LambdaFunc:
+    Type: AWS::Lambda::Function
+    DependsOn: LambdaExecRole
+    Properties:
+      FunctionName: !Ref LambdaFunctionName
+      Handler: index.lambda_handler
+      Role: !GetAtt LambdaExecRole.Arn
+      Runtime: python3.7
+      Code:
+        ZipFile:  |
+          #!/usr/bin/env python3
+          """ Script to trigger moving of existing files in S3 bucket
+          to /archive folder
+
+          Python Version: 3.7
+          """
+
+          __author__ = "Paul Fry"
+          __version__ = "0.1"
+
+          import os
+          import sys
+          from time import time
+          import boto3
+          import logging
+          from urllib.parse import unquote_plus
+
+          #set logging
+          root = logging.getLogger()
+          if root.handlers:
+              for handler in root.handlers:
+                  root.removeHandler(handler)
+          logging.basicConfig(format='%(message)s',level=logging.INFO)
+
+          #create an S3 resource
+          s3_resource = boto3.resource('s3')
+
+          def lambda_handler(event, context):
+              """ Main entry point of the lambda function """
+              START_TIME = time()
+              logging.info("lambda_handler() function called")
+
+              #parse the desired event items
+              bucket_name = event['Records'][0]['s3']['bucket']['name']
+              file_uploaded = unquote_plus(event['Records'][0]['s3']['object']['key']).split("/")[-1] #unquote_plus handles any s3 'percent encoding' characters
+              logging.info(f"\n##########\nInput args:\ns3_bucket_name: {bucket_name}\nfile_uploaded: {file_uploaded}\n##########")
+
+              s3_bucket = s3_resource.Bucket(bucket_name)
+
+              logging.info("Finished lambda_handler() function in %s seconds", round(time() - START_TIME, 2))
+  
+  LambdaExecRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Ref LambdaIAMRole
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+            - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns: ["arn:aws:iam::aws:policy/AWSLambdaExecute",
+                          "arn:aws:iam::aws:policy/AmazonS3FullAccess"]
+
