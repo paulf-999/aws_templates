@@ -11,10 +11,4 @@ create_cfn_stack:
 	--capabilities CAPABILITY_IAM
 	sleep 60
 	#wait for 60 secs (for S3 bucket to be created), then upload the file below
-	aws --profile ${AWS_PROFILE} s3 cp src/tutorial.py s3://${S3_BUCKET}/dags/
-
-create_iam_policy_for_airflow_developers:
-	aws cloudformation create-stack \
-	--profile ${AWS_PROFILE} \
-	--stack-name mwaa-airflow-eg-iam-policy \
-	--template-body
+	aws --profile ${AWS_PROFILE} s3 cp dags/tutorial.py s3://${S3_BUCKET}/dags/
