@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+  S3 bucket with:
+  * versioning
+  * encryption
+  * public-access blocked
+  * and a bucket policy
+
+Parameters:
+  S3BucketName:
+    Type: String
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref S3BucketName
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: TRUE #turns on opt 1: "Block public access to buckets and objects granted through new access control lists (ACLs)"
+        IgnorePublicAcls: TRUE #turns on opt 2: "Block public access to buckets and objects granted through any access control lists (ACLs)"
+        BlockPublicPolicy: TRUE #turns on opt 3: "Block public access to buckets and objects granted through new public bucket or access point policies"
+        RestrictPublicBuckets: TRUE #turns on opt 4: "Block public and cross-account access to buckets and objects through any public bucket or access point policies"
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+  
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: S3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Id: BucketPolicy
+        Statement:
+          - Sid: DenyInsecureTransport
+            Effect: Deny
+            Principal: "*"
+            Action: s3:*
+            Resource:
+              - Fn::Sub: arn:aws:s3:::${S3Bucket}/*
+            Condition:
+              Bool:
+                aws:SecureTransport: false
+          - Sid: DenyIncorrectEncryptionHeader
+            Effect: Deny
+            Principal: "*"
+            Action: s3:PutObject
+            Resource:
+              Fn::Sub: arn:aws:s3:::${S3Bucket}/*
+            Condition:
+              # Deny if server side encryption is not AES256
+              'Null':
+                s3:x-amz-server-side-encryption: false
+              StringNotEquals:
+                s3:x-amz-server-side-encryption: AES256

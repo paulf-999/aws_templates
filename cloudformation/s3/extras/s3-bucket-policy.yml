@@ -1,0 +1,51 @@
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    # Can't use a Parameter - see https://forums.aws.amazon.com/message.jspa?messageID=560586
+    # DeletionPolicy: !Ref S3BucketDeletionPolicy
+    DeletionPolicy: Delete
+    Properties:
+      BucketName: !Sub "${AWS::AccountId}-${BucketSuffix}"
+      AccessControl: Private
+      VersioningConfiguration:
+        Status: !Ref S3Versioning
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: !Ref BlockPublicAccess
+        BlockPublicPolicy: !Ref BlockPublicAccess
+        IgnorePublicAcls: !Ref BlockPublicAccess
+        RestrictPublicBuckets: !Ref BlockPublicAccess
+
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: S3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Id: BucketPolicy
+        Statement:
+          - Sid: DenyInsecureTransport
+            Effect: Deny
+            Principal: "*"
+            Action: s3:*
+            Resource:
+              - Fn::Sub: arn:aws:s3:::${S3Bucket}/*
+            Condition:
+              Bool:
+                aws:SecureTransport: false
+          - Sid: DenyIncorrectEncryptionHeader
+            Effect: Deny
+            Principal: "*"
+            Action: s3:PutObject
+            Resource:
+              Fn::Sub: arn:aws:s3:::${S3Bucket}/*
+            Condition:
+              # Deny if server side encryption is not AES256
+              'Null':
+                s3:x-amz-server-side-encryption: false
+              StringNotEquals:
+                s3:x-amz-server-side-encryption: AES256
