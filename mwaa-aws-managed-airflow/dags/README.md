@@ -43,3 +43,5 @@ Password: /T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
 
 conn_id = slack_connection (string value)
 host = your webhook URL
+
+Also for reference: https://stackoverflow.com/questions/52054427/how-to-integrate-apache-airflow-with-slack
