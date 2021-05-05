@@ -19,7 +19,11 @@ The steps involved in building and executing this involve:
 ### To do:
 
 * Setup simple example airflow DAGs, e.g. to fetch data from:
-    * S3
+    * secrets_manager
+        1) configure secrets manager:
+        https://docs.aws.amazon.com/mwaa/latest/userguide/connections-secrets-manager.html
+        2) using a SM key for an airflow connection
+        https://docs.aws.amazon.com/mwaa/latest/userguide/samples-secrets-manager.html
     * DMS
     * other
 * revert back to the setup, to instead create a build in a private network
