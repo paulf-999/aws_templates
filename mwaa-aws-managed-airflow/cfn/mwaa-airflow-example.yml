@@ -326,6 +326,7 @@ Resources:
       Path: "/service-role/"
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/SecretsManagerReadWrite
 
   MwaaExecutionPolicy:
     DependsOn: EnvironmentBucket

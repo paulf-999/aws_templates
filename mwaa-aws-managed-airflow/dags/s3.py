@@ -25,12 +25,12 @@ def upload_keys():
 
 
 with DAG(
-    dag_id='s3_bucket_dag',
-    schedule_interval=None,
-    start_date=days_ago(2),
-    max_active_runs=1,
-    tags=['example'],
-) as dag:
+        dag_id='s3_bucket_dag',
+        schedule_interval=None,
+        start_date=days_ago(2),
+        max_active_runs=1,
+        tags=['example'],
+    ) as dag:
 
     # [START howto_operator_s3_bucket]
     create_bucket = S3CreateBucketOperator(
