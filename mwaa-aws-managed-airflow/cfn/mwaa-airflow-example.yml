@@ -8,6 +8,10 @@ Description: >
 
     Follows the AWS user guide: https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html
 
+    Customised to allow connectivity to SecretsManager by:
+    * adding the policy 'SecretsManagerReadWrite' to the IAM role 'MwaaExecutionRole'
+    * adding an  Airflow configuration option
+
 Parameters:
 
   EnvironmentName:
@@ -289,6 +293,9 @@ Resources:
         WebserverLogs:
           LogLevel: !Ref WebserverLogsLevel
           Enabled: true
+      AirflowConfigurationOptions: {"secrets.backend": "airflow.contrib.secrets.aws_secrets_manager.SecretsManagerBackend","secrets.backend_kwargs": "{\"connections_prefix\" : \"airflow/connections\", \"variables_prefix\" : \"airflow/variables\"}"}
+
+
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
