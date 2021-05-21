@@ -69,6 +69,9 @@ Parameters:
   S3BucketName:
     Type: String
     Default: mwaa-airflow-example
+  MwaaExecRoleName:
+    Type: String
+    Default: MwaaExecRoleName
     
 Resources:
   #####################################################################################################################
@@ -320,6 +323,7 @@ Resources:
   MwaaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: !Ref MwaaExecRoleName
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:

@@ -11,16 +11,15 @@ This template creates:
 
 The steps involved in building and executing this involve:
 
-1) At the top of the `makefile`, provide values for the variables:
+1) At the top of the `makefile`, provide a value for the variable:
     * `AWS_PROFILE`: to indicate what AWS_PROFILE to use
-    * `S3_BUCKET`: to specify the name of the S3 bucket to create
 2) Following this, run the makefile by typing `make`!
 
 ### To do:
 
 * Setup simple example airflow DAGs, e.g. to fetch data from:
     * secrets_manager
-        1) configure secrets manager:
+        1) configure secrets manager: (in progress)
         https://docs.aws.amazon.com/mwaa/latest/userguide/connections-secrets-manager.html
         2) using a SM key for an airflow connection
         https://docs.aws.amazon.com/mwaa/latest/userguide/samples-secrets-manager.html
