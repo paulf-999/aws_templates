@@ -1,0 +1,10 @@
+{
+    "Parameters" : {
+        "ConnType" : "mssql",
+        "AirflowUIURL" : "....ap-southeast-2.airflow.amazonaws.com",
+        "Login" : "beep",
+        "Password" : "beep",
+        "RoleARN": "beep",
+        "Region": "ap-southeast-2"
+    }
+}
