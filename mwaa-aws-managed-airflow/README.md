@@ -1,4 +1,4 @@
-# mwaa-awa-managed-airflow (WIP)
+# MWAA: i.e. AWS-managed-airflow (WIP)
 
 Slightly streamlined version of the AWS quick start user guide for MWAA: https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html
 
