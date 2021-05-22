@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
 Python Version  : 3.7
-* Name          : boilerplate.py
-* Description   : Boilerplate python script
-* Created       : 26-02-2021
-* Usage         : python3 boilerplate.py
+* Name          : gen_mwaa_conn_string.py
+* Description   : Script to generate the MWAA connection string
+* Created       : 22-05-2021
+* Usage         : python3 boilerplate.py ${CONN_TYPE} ${AIRFLOW_UI_URL} ${LOGIN} ${PASS} ${ROLE_ARN} ${REGION} ${AWS_PROFILE}
 """
 
 __author__ = "Paul Fry"
@@ -17,10 +17,8 @@ from time import time
 import logging
 
 #import custom modules
-import boto3
 import urllib.parse
 
-working_dir = os.getcwd()
 # Set up a specific logger with our desired output level
 logging.basicConfig(format='%(message)s')
 logger = logging.getLogger('application_logger')
@@ -45,7 +43,7 @@ def main():
     #role_arn = urllib.parse.quote_plus('YOUR_EXECUTION_ROLE_ARN')
     #region_name = 'YOUR_REGION'
 
-    conn_string = '{0}://{1}:{2}@{3}?role_arn={4}&region_name={5}'.format(conn_type, host, login, password, role_arn, region_name)
+    conn_string = '{0}://{1}:{2}@{3}?role_arn={4}&region_name={5}'.format(conn_type, airflow_ui_url, login, password, role_arn, region_name)
     print(conn_string)
 
     logger.debug(f"Function finished: main() finished in {round(time() - START_TIME, 2)} seconds")
@@ -63,11 +61,14 @@ if __name__ == '__main__':
     region_name = sys.argv[6]
     aws_profile = sys.argv[7]
 
-    print(f"conn_type = {conn_type}")
-    print(f"airflow_ui_url = {airflow_ui_url}")
-    print(f"login = {login}")
-    print(f"password = {password}")
-    print(f"role_arn = {role_arn}")
-    print(f"region_name = {region_name}")
+    #print(f"conn_type = {conn_type}")
+    #print(f"airflow_ui_url = {airflow_ui_url}")
+    #print(f"login = {login}")
+    #print(f"password = {password}")
+    #print(f"role_arn = {role_arn}")
+    #print(f"region_name = {region_name}")
+
+    conn_string = '{0}://{1}:{2}@{3}?role_arn={4}&region_name={5}'.format(conn_type, airflow_ui_url, login, password, role_arn, region_name)
+    print(conn_string)
 
     #main()
