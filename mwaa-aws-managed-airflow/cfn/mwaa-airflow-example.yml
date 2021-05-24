@@ -61,12 +61,8 @@ Parameters:
     Description: Log level for WebserverLogs
     Type: String
     Default: INFO
-  MWAAEnvName:
-    Type: String
-    Default: mwaa-airflow-env-example
   MwaaExecRoleName:
     Type: String
-    Default: MwaaExecRoleName
     
 Resources:
   #####################################################################################################################
@@ -247,7 +243,7 @@ Resources:
     Type: AWS::MWAA::Environment
     DependsOn: MwaaExecutionPolicy
     Properties:
-      Name: !Ref MWAAEnvName
+      Name: !Ref EnvironmentName
       SourceBucketArn: !ImportValue MWAAEnvironmentS3BucketArn
       ExecutionRoleArn: !GetAtt MwaaExecutionRole.Arn
       DagS3Path: dags

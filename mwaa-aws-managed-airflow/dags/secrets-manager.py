@@ -7,7 +7,7 @@ from datetime import timedelta
 import os
 
 ### The steps to create this secret key can be found at: https://docs.aws.amazon.com/mwaa/latest/userguide/connections-secrets-manager.html
-sm_secretId_name = 'airflow/connections/myconn'
+sm_secretId_name = 'airflow/connections/mwaa-connection'
 
 default_args = {
     'owner': 'airflow',
