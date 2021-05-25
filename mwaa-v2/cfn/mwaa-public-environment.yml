@@ -40,24 +40,18 @@ Resources:
     DependsOn: MwaaExecutionPolicy
     Properties:
       Name: !Ref EnvironmentName
-      AirflowConfigurationOptions:
-        core.default_ui_timezone: "Australia/Melbourne"
-        logging.logging_level: INFO
-        secrets.backend: "airflow.contrib.secrets.aws_secrets_manager.SecretsManagerBackend"
-        secrets.backend_kwargs: "{\"connections_prefix\" : \"airflow/connections\", \"variables_prefix\" : \"airflow/variables\"}"
-      DagS3Path: dags
-      EnvironmentClass: mw1.small
-      ExecutionRoleArn: !GetAtt MwaaExecutionRole.Arn
-      RequirementsS3Path: requirements.txt
-      WebserverAccessMode: PUBLIC_ONLY
-      MaxWorkers: !Ref MaxWorkerNodes
       SourceBucketArn: !ImportValue MWAAEnvironmentS3BucketArn
+      ExecutionRoleArn: !GetAtt MwaaExecutionRole.Arn
+      DagS3Path: dags
+      RequirementsS3Path: requirements.txt
       NetworkConfiguration:
         SecurityGroupIds:
           - !ImportValue MwaaSecurityGroupId
         SubnetIds:
           - !ImportValue MwaaPrivateSubnet1
           - !ImportValue MwaaPrivateSubnet2
+      WebserverAccessMode: PUBLIC_ONLY
+      MaxWorkers: !Ref MaxWorkerNodes
       LoggingConfiguration:
         DagProcessingLogs:
           LogLevel: !Ref DagProcessingLogs

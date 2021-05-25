@@ -34,11 +34,6 @@ Resources:
     Type: AWS::MWAA::Environment
     Properties:
       Name: !Ref EnvironmentName
-      AirflowConfigurationOptions:
-        core.default_ui_timezone: "Australia/Melbourne"
-        logging.logging_level: INFO
-        secrets.backend: "airflow.contrib.secrets.aws_secrets_manager.SecretsManagerBackend"
-        secrets.backend_kwargs: "{\"connections_prefix\" : \"airflow/connections\", \"variables_prefix\" : \"airflow/variables\"}"
       SourceBucketArn: !ImportValue MWAAEnvironmentS3BucketArn
       ExecutionRoleArn: !ImportValue MwaaExecutionRoleArn
       DagS3Path: dags

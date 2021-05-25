@@ -1,10 +1,10 @@
 {
     "Parameters" : {
         "AwsAccountId": 765175883219,
-        "MWAAEnvName": "mwaa-airflow-env-example-v2",
-        "S3Bucket" : "mwaa-airflow-example-v2",
-        "IamRoleName" : "MwaaExecRole-v2",
-        "SrcSystem" : "EgNexus-v2",
+        "MWAAEnvName": "mwaa-airflow-env-example",
+        "S3Bucket" : "mwaa-airflow-example",
+        "IamRoleName" : "MwaaExecRole",
+        "SrcSystem" : "EgNexus",
         "ConnType" : "mssql",
         "Login" : "${AWS_ACCESS_KEY}",
         "Password" : "${AWS_SECRET_ACCESS_KEY}",
