@@ -15,26 +15,20 @@ $(eval PASS=$(shell jq '.Parameters.Password' ${CONFIG_FILE}))
 $(eval ROLE_ARN=$(shell jq '.Parameters.RoleARN' ${CONFIG_FILE}))
 $(eval REGION=$(shell jq '.Parameters.Region' ${CONFIG_FILE}))
 
-create_mwaa_s3_bucket:
-	$(info [+] Create an instance of MWAA)
-	aws cloudformation deploy \
-	--profile ${AWS_PROFILE} \
-	--stack-name mwaa-s3-bucket \
-	--template-file cfn/s3-bucket.yml
-	aws --profile ${AWS_PROFILE} s3 cp dags/s3.py s3://${S3_BUCKET}/dags/
-	aws --profile ${AWS_PROFILE} s3 cp dags/slack.py s3://${S3_BUCKET}/dags/
-	aws --profile ${AWS_PROFILE} s3 cp dags/secrets-manager.py s3://${S3_BUCKET}/dags/
-	aws --profile ${AWS_PROFILE} s3 cp requirements.txt s3://${S3_BUCKET}/requirements.txt
-	#@aws --profile ${AWS_PROFILE} mwaa get-environment --name ${MWAA_ENV_NAME} > tmp/mwaa-env-details.json
-
 create_cfn_stack:
-	$(info [+] Create an instance of MWAA)
-	aws cloudformation deploy \
+	aws cloudformation create-stack \
 	--profile ${AWS_PROFILE} \
-	--stack-name mwaa-airflow-eg1 \
-	--template-file cfn/mwaa-airflow-example.yml \
+	--stack-name mwaa-airflow-eg-orig \
+	--template-body file://wip/mwaa-airflow-example.yml \
 	--capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
-	--parameter-overrides MwaaExecRoleName=${IAM_ROLE}
+	--parameters ParameterKey=EnvironmentName,ParameterValue=MWAA-env-debugging \
+	ParameterKey=S3BucketName,ParameterValue=mwaa-airflow-debugging-eg
+	sleep 45
+	#wait for 45 secs (for S3 bucket to be created), then upload the file below
+	aws --profile ${AWS_PROFILE} s3 cp dags/s3.py s3://mwaa-airflow-debugging-eg/dags/
+	aws --profile ${AWS_PROFILE} s3 cp dags/slack.py s3://mwaa-airflow-debugging-eg/dags/
+	aws --profile ${AWS_PROFILE} s3 cp dags/secrets-manager.py s3://mwaa-airflow-debugging-eg/dags/
+	aws --profile ${AWS_PROFILE} s3 cp requirements.txt s3://mwaa-airflow-debugging-eg/requirements.txt
 
 gen_airflow_aws_airflow_conn_string:
 	$(info [+] Generate MWAA connection string)

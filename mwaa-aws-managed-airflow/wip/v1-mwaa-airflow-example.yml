@@ -275,7 +275,7 @@ Resources:
         WebserverLogs:
           LogLevel: !Ref WebserverLogsLevel
           Enabled: true
-      AirflowConfigurationOptions: {"secrets.backend": "airflow.contrib.secrets.aws_secrets_manager.SecretsManagerBackend","secrets.backend_kwargs": "{\"connections_prefix\" : \"airflow/connections\", \"variables_prefix\" : \"airflow/variables\"}"}
+      AirflowConfigurationOptions: {"core.default_ui_timezone": "Australia/Melbourne","secrets.backend": "airflow.contrib.secrets.aws_secrets_manager.SecretsManagerBackend","secrets.backend_kwargs": "{\"connections_prefix\" : \"airflow/connections\", \"variables_prefix\" : \"airflow/variables\"}"}
 
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -418,3 +418,4 @@ Outputs:
     Value: !Sub "https://${MwaaEnvironment.WebserverUrl}"
     Export:
       Name: MwaaApacheAirflowUI
+    

@@ -65,7 +65,7 @@ Parameters:
     Type: String
   MwaaManagedPolicyName:
     Type: String
-    Default: MwaaManagedPolicy
+    Default: MwaaManagedPolicy1
     
 Resources:
   #####################################################################################################################
@@ -90,12 +90,14 @@ Resources:
 
   InternetGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
+    DependsOn: PrivateRouteTable2
     Properties:
       InternetGatewayId: !Ref InternetGateway
       VpcId: !Ref VPC
 
   PublicSubnet1:
     Type: AWS::EC2::Subnet
+    DependsOn: PublicRouteTable
     Properties:
       VpcId: !Ref VPC
       AvailabilityZone: !Select [ 0, !GetAZs '' ]
@@ -107,6 +109,7 @@ Resources:
 
   PublicSubnet2:
     Type: AWS::EC2::Subnet
+    DependsOn: PublicRouteTable
     Properties:
       VpcId: !Ref VPC
       AvailabilityZone: !Select [ 1, !GetAZs  '' ]
@@ -118,6 +121,7 @@ Resources:
 
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
+    DependsOn: PrivateRouteTable2
     Properties:
       VpcId: !Ref VPC
       AvailabilityZone: !Select [ 0, !GetAZs  '' ]
@@ -129,6 +133,7 @@ Resources:
 
   PrivateSubnet2:
     Type: AWS::EC2::Subnet
+    DependsOn: PrivateRouteTable2
     Properties:
       VpcId: !Ref VPC
       AvailabilityZone: !Select [ 1, !GetAZs  '' ]
@@ -140,13 +145,13 @@ Resources:
 
   NatGateway1EIP:
     Type: AWS::EC2::EIP
-    DependsOn: InternetGatewayAttachment
+    DependsOn: ['InternetGatewayAttachment', 'PrivateSubnet2']
     Properties:
       Domain: vpc
 
   NatGateway2EIP:
     Type: AWS::EC2::EIP
-    DependsOn: InternetGatewayAttachment
+    DependsOn: ['InternetGatewayAttachment', 'PrivateSubnet2']
     Properties:
       Domain: vpc
 
@@ -192,6 +197,7 @@ Resources:
 
   PrivateRouteTable1:
     Type: AWS::EC2::RouteTable
+    DependsOn: PublicRouteTable
     Properties:
       VpcId: !Ref VPC
       Tags:
@@ -213,6 +219,7 @@ Resources:
 
   PrivateRouteTable2:
     Type: AWS::EC2::RouteTable
+    DependsOn: ['PublicRouteTable', 'PrivateRouteTable1']
     Properties:
       VpcId: !Ref VPC
       Tags:
@@ -234,6 +241,7 @@ Resources:
 
   NoIngressSecurityGroup:
     Type: AWS::EC2::SecurityGroup
+    DependsOn: PrivateRouteTable2
     Properties:
       GroupName: "no-ingress-sg"
       GroupDescription: "Security group with no ingress rule"
@@ -279,6 +287,7 @@ Resources:
 
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
+    DependsOn: NoIngressSecurityGroup
     Properties:
       VpcId: !Ref VPC
       GroupDescription: !Sub "Security Group for Amazon MWAA Environment ${AWS::StackName}-MwaaEnvironment"
@@ -286,6 +295,7 @@ Resources:
   
   SecurityGroupIngress:
     Type: AWS::EC2::SecurityGroupIngress
+    DependsOn: SecurityGroup
     Properties:
       GroupId: !Ref SecurityGroup
       IpProtocol: "-1"
@@ -293,6 +303,7 @@ Resources:
 
   SecurityGroupEgress:
     Type: AWS::EC2::SecurityGroupEgress
+    DependsOn: SecurityGroup
     Properties:
       GroupId: !Ref SecurityGroup
       IpProtocol: "-1"
@@ -319,6 +330,7 @@ Resources:
 
   MwaaExecutionPolicy:
     Type: AWS::IAM::ManagedPolicy
+    DependsOn: MwaaExecutionRole
     Properties:
       ManagedPolicyName: !Ref MwaaManagedPolicyName
       Roles:
@@ -417,4 +429,4 @@ Outputs:
     Description: MWAA Environment
     Value: !Sub "https://${MwaaEnvironment.WebserverUrl}"
     Export:
-      Name: MwaaApacheAirflowUI
+      Name: MwaaApacheAirflowUI1

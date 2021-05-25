@@ -56,4 +56,4 @@ The steps involved in building and executing this involve:
         https://docs.aws.amazon.com/mwaa/latest/userguide/samples-secrets-manager.html
     * DMS
     * other
-* revert back to the setup, to instead create a build in a private network
+* revert back to the setup, to instead create a build in a private network (see: https://docs.aws.amazon.com/mwaa/latest/userguide/vpc-create.html#vpc-create-template-private-only)
