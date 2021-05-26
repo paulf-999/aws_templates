@@ -15,7 +15,6 @@ default_args = {
     'depends_on_past': False
 }
 
-
 ### Gets the secret myconn from Secrets Manager
 def read_from_aws_sm_fn(**kwargs):
     ### set up Secrets Manager

@@ -16,9 +16,10 @@ $(eval REGION=$(shell jq '.Parameters.Region' ${CONFIG_FILE}))
 $(eval VERSION=$(shell jq '.Parameters.Version' ${CONFIG_FILE}))
 
 create_s3_bucket:
+	$(info [+] Create an initial S3 bucket, required to store dags / requirements.txt)
 	aws cloudformation create-stack \
 	--profile ${AWS_PROFILE} \
-	--stack-name mwaa-airflow-wip-s3-bucket-v${VERSION} \
+	--stack-name mwaa-airflow-s3-bucket-v${VERSION} \
 	--template-body file://cfn/s3-bucket.yml \
 	--capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
 	--parameters ParameterKey=S3BucketName,ParameterValue=${S3_BUCKET}
@@ -31,20 +32,37 @@ create_s3_bucket:
 	#@aws --profile ${AWS_PROFILE} mwaa get-environment --name ${MWAA_ENV_NAME} > tmp/mwaa-env-details.json
 
 create_public_vpc_mwaa:
+	$(info [+] Create a public VPC)
 	aws cloudformation create-stack \
 	--profile ${AWS_PROFILE} \
-	--stack-name mwaa-airflow-wip-public-vpc-v${VERSION} \
+	--stack-name mwaa-airflow-public-vpc-v${VERSION} \
 	--template-body file://cfn/public-vpc.yml \
 	--capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
 	--parameters ParameterKey=EnvironmentName,ParameterValue=${MWAA_ENV_NAME}
 
 create_public_mwaa:
+	$(info [+] Create a public MWAA instace)
 	aws cloudformation create-stack \
 	--profile ${AWS_PROFILE} \
-	--stack-name mwaa-airflow-wip-public-mwaa-v${VERSION} \
+	--stack-name mwaa-airflow-public-mwaa-v${VERSION} \
 	--template-body file://cfn/public-mwaa.yml \
 	--capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
 	--parameters ParameterKey=EnvironmentName,ParameterValue=${MWAA_ENV_NAME}
+
+gen_airflow_aws_airflow_conn_string:
+	$(info [+] Generate MWAA connection string)
+	@# Get MWAA Web Server URL & place in variable 'AIRFLOW_UI_URL'
+	aws --profile ${AWS_PROFILE} mwaa get-environment --name ${MWAA_ENV_NAME} > tmp/mwaa-env-details.json
+	@$(eval AIRFLOW_UI_URL=$(shell jq '.Environment.WebserverUrl' tmp/mwaa-env-details.json))
+	@$(eval MWAA_CONN_STRING=$(shell python3 py/gen_mwaa_conn_string.py ${CONN_TYPE} ${AIRFLOW_UI_URL} ${LOGIN} ${PASS} ${ROLE_ARN} ${REGION} ${AWS_PROFILE}))
+	@# Create secret for MWAA Conn String)
+	@aws cloudformation deploy \
+	--profile ${AWS_PROFILE} \
+	--stack-name mwaa-airflow-sm-v${VERSION} \
+	--template-file cfn/secrets-manager.yml \
+	--parameter-overrides SecretName="airflow/connections/mwaa-connection" \
+	SrcSystem=${DATA_SRC} \
+	SecretString=${MWAA_CONN_STRING}
 
 upload_dag_eg:
 	@aws --profile ${AWS_PROFILE} s3 cp dags/secrets-manager.py s3://${S3_BUCKET}/dags/

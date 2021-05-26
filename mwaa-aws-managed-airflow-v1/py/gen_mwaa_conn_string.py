@@ -52,7 +52,6 @@ def main():
 
 if __name__ == '__main__':
     """ This is executed when run from the command line """
-
     conn_type = sys.argv[1]
     airflow_ui_url = sys.argv[2]
     login = sys.argv[3]
