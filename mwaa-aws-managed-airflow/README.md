@@ -1,23 +1,20 @@
 # MWAA: i.e. AWS-managed-airflow (WIP)
 
-Slightly streamlined version of the AWS quick start user guide for MWAA: https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html
+Streamlined version of the AWS quick start user guide for MWAA (https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html). These scrips create: 
+
+* an S3 Bucket and uploads the prerequisite requirements.txt (containing the required airflow-aws package, needed for Airflow with AWS)
+* a (public) VPC inftrastructure (private VPC is WIP)
+* an AWS MWAA (Managed Workflows for Apache Airflow) environment
+* and the SecretsManager configurations
 
 ## Contents
 
-1. Overview
 2. Customisations
     * S3 bucket creation and prerequisite `requirements.txt`
-    * Split out the Quickstart CFN into 3 CFNs ()
+    * Split out the Quickstart CFN into 3 CFNs
     * Connectivity to AWS Secrets Manager
 3. How-to run
 4. To-dos
-
-## 1. Overview 
-
-This template creates:
-* an S3 Bucket and uploads the prerequisite requirements.txt
-* a (public) VPC inftrastructure (private - WIP)
-* and an AWS MWAA (Managed Workflows for Apache Airflow) environment
 
 ## 2. Customisations
 
@@ -29,10 +26,13 @@ This template creates:
 
 ### Split out the Quickstart CFN into 3 CFNs
 
-* The big bang, single CFN isn't very user friendly and difficult to understand dependencies
+The big bang, single CFN used for the AWS quick start user guide for MWAA (https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html) isn't very user friendly and difficult to understand dependencies.
+
+As a result, I've Slightly streamlined version of the AWS quick start user guide for MWAA: 
+
 * As a result, I split the CFN into 3:
     * 1 for the prerequisite S3 bucket
-    * 1 for the networking components needed for a public VPC (private - WIP)
+    * 1 for the networking components needed for a public VPC (private VPC is WIP)
     * and 1 for the MWAA env
 
 ### Connectivity to AWS Secrets Manager
@@ -55,16 +55,17 @@ The steps involved in building and executing this involve:
 2) Change the input parameters within the config file, `env/config.json` (config_eg.json is a stripped back example, in case I've hidden config.json)
 3) Following this, run the makefile by typing `make`!
 
-### 4. To do:
+## 4. To do:
 
 * Setup simple example airflow DAGs, e.g. to fetch data from:
     * secrets_manager
-        1) configure secrets manager: (done!)
+        1) configure secrets manager: (done)
         https://docs.aws.amazon.com/mwaa/latest/userguide/connections-secrets-manager.html
         2) using a SM key for an airflow connection (in progress)
         https://docs.aws.amazon.com/mwaa/latest/userguide/samples-secrets-manager.html
     * DMS
     * DBT
+    * Slack (done - but will create version to instead use an Airflow variable)
     * convert CSV to parquet
     * other
 * revert back to the setup, to create a private network alternative (see: https://docs.aws.amazon.com/mwaa/latest/userguide/vpc-create.html#vpc-create-template-private-only)
