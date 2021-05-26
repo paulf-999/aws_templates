@@ -65,5 +65,6 @@ The steps involved in building and executing this involve:
         https://docs.aws.amazon.com/mwaa/latest/userguide/samples-secrets-manager.html
     * DMS
     * DBT
+    * convert CSV to parquet
     * other
 * revert back to the setup, to create a private network alternative (see: https://docs.aws.amazon.com/mwaa/latest/userguide/vpc-create.html#vpc-create-template-private-only)
