@@ -52,7 +52,7 @@ The steps involved in building and executing this involve:
 
 1) At the top of the `makefile`, provide a value for the variable:
     * `AWS_PROFILE`: to indicate what AWS_PROFILE to use
-2) Change the input parameters within the config file, `env/config.json`
+2) Change the input parameters within the config file, `env/config.json` (config_eg.json is a stripped back example, in case I've hidden config.json)
 3) Following this, run the makefile by typing `make`!
 
 ### 4) To do:
