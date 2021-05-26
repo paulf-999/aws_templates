@@ -1,4 +1,4 @@
-default: create_s3_bucket create_public_vpc_mwaa create_public_mwaa
+default: create_s3_bucket create_public_vpc_mwaa create_public_mwaa gen_airflow_aws_airflow_conn_string
 
 AWS_PROFILE=${MY_AWS_PROFILE}
 CONFIG_FILE=env/config.json
@@ -17,37 +17,34 @@ $(eval VERSION=$(shell jq '.Parameters.Version' ${CONFIG_FILE}))
 
 create_s3_bucket:
 	$(info [+] Create an initial S3 bucket, required to store dags / requirements.txt)
-	aws cloudformation create-stack \
+	aws cloudformation deploy \
 	--profile ${AWS_PROFILE} \
 	--stack-name mwaa-airflow-s3-bucket-v${VERSION} \
-	--template-body file://cfn/s3-bucket.yml \
+	--template-file cfn/s3-bucket.yml \
 	--capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
-	--parameters ParameterKey=S3BucketName,ParameterValue=${S3_BUCKET}
-	sleep 45
-	#wait for 45 secs (for S3 bucket to be created), then upload the file below
+	--parameter-overrides S3BucketName=${S3_BUCKET}
 	aws --profile ${AWS_PROFILE} s3 cp dags/s3.py s3://${S3_BUCKET}/dags/
 	#aws --profile ${AWS_PROFILE} s3 cp dags/slack.py s3://${S3_BUCKET}/dags/
 	aws --profile ${AWS_PROFILE} s3 cp dags/secrets-manager.py s3://${S3_BUCKET}/dags/
 	aws --profile ${AWS_PROFILE} s3 cp requirements.txt s3://${S3_BUCKET}/requirements.txt
-	#@aws --profile ${AWS_PROFILE} mwaa get-environment --name ${MWAA_ENV_NAME} > tmp/mwaa-env-details.json
 
 create_public_vpc_mwaa:
 	$(info [+] Create a public VPC)
-	aws cloudformation create-stack \
+	aws cloudformation deploy \
 	--profile ${AWS_PROFILE} \
 	--stack-name mwaa-airflow-public-vpc-v${VERSION} \
-	--template-body file://cfn/public-vpc.yml \
+	--template-file cfn/public-vpc.yml \
 	--capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
-	--parameters ParameterKey=EnvironmentName,ParameterValue=${MWAA_ENV_NAME}
+	--parameter-overrides EnvironmentName=${MWAA_ENV_NAME}
 
 create_public_mwaa:
 	$(info [+] Create a public MWAA instace)
-	aws cloudformation create-stack \
+	aws cloudformation deploy \
 	--profile ${AWS_PROFILE} \
 	--stack-name mwaa-airflow-public-mwaa-v${VERSION} \
-	--template-body file://cfn/public-mwaa.yml \
+	--template-file cfn/public-mwaa.yml \
 	--capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
-	--parameters ParameterKey=EnvironmentName,ParameterValue=${MWAA_ENV_NAME}
+	--parameter-overrides EnvironmentName=${MWAA_ENV_NAME}
 
 gen_airflow_aws_airflow_conn_string:
 	$(info [+] Generate MWAA connection string)
