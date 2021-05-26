@@ -46,7 +46,7 @@ This template creates:
         * the generation of the Apache Airflow AWS connection string
         * adds an entry to Secrets Manager for this connection string (using a CFN template)
 
-## 3) How-to run:
+## 3. How-to run:
 
 The steps involved in building and executing this involve:
 
@@ -55,7 +55,7 @@ The steps involved in building and executing this involve:
 2) Change the input parameters within the config file, `env/config.json` (config_eg.json is a stripped back example, in case I've hidden config.json)
 3) Following this, run the makefile by typing `make`!
 
-### 4) To do:
+### 4. To do:
 
 * Setup simple example airflow DAGs, e.g. to fetch data from:
     * secrets_manager
