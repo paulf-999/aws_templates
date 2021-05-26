@@ -1,4 +1,6 @@
-# MWAA: i.e. AWS-managed-airflow (WIP)
+# MWAA: i.e. AWS-managed-airflow
+
+## Overview
 
 Streamlined version of the AWS quick start user guide for MWAA (https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html). These scrips create: 
 
@@ -9,14 +11,14 @@ Streamlined version of the AWS quick start user guide for MWAA (https://docs.aws
 
 ## Contents
 
-2. Customisations
+1. Customisations
     * S3 bucket creation and prerequisite `requirements.txt`
     * Split out the Quickstart CFN into 3 CFNs
     * Connectivity to AWS Secrets Manager
-3. How-to run
-4. To-dos
+2. How-to run
+3. To-dos
 
-## 2. Customisations
+## 1. Customisations
 
 ### S3 bucket creation and prerequisite `requirements.txt`
 
@@ -46,7 +48,7 @@ As a result, I've Slightly streamlined version of the AWS quick start user guide
         * the generation of the Apache Airflow AWS connection string
         * adds an entry to Secrets Manager for this connection string (using a CFN template)
 
-## 3. How-to run:
+## 2. How-to run:
 
 The steps involved in building and executing this involve:
 
@@ -55,7 +57,7 @@ The steps involved in building and executing this involve:
 2) Change the input parameters within the config file, `env/config.json` (config_eg.json is a stripped back example, in case I've hidden config.json)
 3) Following this, run the makefile by typing `make`!
 
-## 4. To do:
+## 3. To do:
 
 * Setup simple example airflow DAGs, e.g. to fetch data from:
     * secrets_manager
