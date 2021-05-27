@@ -13,7 +13,7 @@ Streamlined version of the AWS quick start user guide for MWAA (https://docs.aws
 
 1. Customisations
     * S3 bucket creation and prerequisite `requirements.txt`
-    * Split out the AWS MWAA quickstart CFN into 3 CFNs
+    * Split out the single 'big bang' AWS MWAA quickstart CFN into 3 logically grouped CFNs
     * Connectivity to AWS Secrets Manager
 2. How-to run
 3. To-dos
