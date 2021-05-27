@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+  RDS SQL Server Express CFN template.
+
+Parameters:
+  DBUser:
+    Default: admin
+    Type: String
+  DBPassword:
+    Type: String
+    NoEcho: true
+  InstanceName:
+    Default: PF-CFN-RDS-MSSQL-EX-Instance
+    Type: String
+  DBEngine:
+    Default: sqlserver-ex
+    Type: String
+  DBInstanceType:
+    Default: db.t2.micro
+    Type: String
+  DBEngineVersion:
+    Default: 14.00.3223.3.v1
+    Type: String
+  AllocatedStorage:
+    Default: 20
+    Type: String
+
+Resources:
+  # Create an RDS instance
+  CFNMSSQLExpressDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: !Ref AllocatedStorage
+      DBInstanceClass: !Ref DBInstanceType
+      DBInstanceIdentifier: !Ref InstanceName
+      Engine: !Ref DBEngine
+      EngineVersion: !Ref DBEngineVersion
+      LicenseModel: license-included
+      MasterUsername: !Ref DBUser
+      MasterUserPassword: !Ref DBPassword
+      PubliclyAccessible: Yes
