@@ -24,8 +24,8 @@ create_s3_bucket:
 	--capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
 	--parameter-overrides S3BucketName=${S3_BUCKET}
 	aws --profile ${AWS_PROFILE} s3 cp requirements.txt s3://${S3_BUCKET}/requirements.txt
-	aws --profile ${AWS_PROFILE} s3 cp dags/secrets_manager.py s3://${S3_BUCKET}/dags/
-	aws --profile ${AWS_PROFILE} s3 cp dags/s3_bucket.py s3://${S3_BUCKET}/dags/
+	aws --profile ${AWS_PROFILE} s3 cp dags/secrets_manager_dag.py s3://${S3_BUCKET}/dags/
+	aws --profile ${AWS_PROFILE} s3 cp dags/s3_bucket_dag.py s3://${S3_BUCKET}/dags/
 	aws --profile ${AWS_PROFILE} s3 cp dags/get_airflow_cfg.py s3://${S3_BUCKET}/dags/
 	aws --profile ${AWS_PROFILE} s3 cp dags/get_env_vars.py s3://${S3_BUCKET}/dags/
 	aws --profile ${AWS_PROFILE} s3 cp dags/get_py_pkgs.py s3://${S3_BUCKET}/dags/

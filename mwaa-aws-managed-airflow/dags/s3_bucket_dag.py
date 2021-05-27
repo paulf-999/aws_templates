@@ -12,6 +12,12 @@ from airflow.utils.dates import days_ago
 
 BUCKET_NAME = 'pftest-26021988'
 
+default_args = {
+    'owner': 'airflow',
+    'start_date': days_ago(1),
+    'depends_on_past': False
+}
+
 def upload_keys():
     """This is a python callback to add keys into the s3 bucket"""
     # add keys to bucket
@@ -23,13 +29,12 @@ def upload_keys():
             bucket_name=BUCKET_NAME,
         )
 
-
 with DAG(
-        dag_id='s3_bucket_dag',
+        dag_id=os.path.basename(__file__).replace(".py", ""),
+        tags=['python'],
+        default_args=default_args,
         schedule_interval=None,
-        start_date=days_ago(2),
-        max_active_runs=1,
-        tags=['example'],
+        max_active_runs=1
     ) as dag:
 
     # [START howto_operator_s3_bucket]
