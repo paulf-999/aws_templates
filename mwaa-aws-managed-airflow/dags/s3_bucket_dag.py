@@ -8,8 +8,6 @@ from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from airflow.providers.amazon.aws.operators.s3_bucket import S3CreateBucketOperator, S3DeleteBucketOperator
 from airflow.utils.dates import days_ago
 
-#BUCKET_NAME = os.environ.get('BUCKET_NAME', 'test-airflow-12345')
-
 BUCKET_NAME = 'pftest-26021988'
 
 default_args = {

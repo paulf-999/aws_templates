@@ -17,6 +17,7 @@ Streamlined version of the AWS quick start user guide for MWAA (https://docs.aws
     * Connectivity to AWS Secrets Manager
 2. How-to run
 3. To-dos
+4. Hints and Tips
 
 ## 1. Customisations
 
@@ -71,3 +72,10 @@ The steps involved in building and executing this involve:
     * convert CSV to parquet
     * other
 * revert back to the setup, to create a private network alternative (see: https://docs.aws.amazon.com/mwaa/latest/userguide/vpc-create.html#vpc-create-template-private-only)
+
+## 4. Hints and Tips
+
+a) Local MWAA environment
+
+* To run a local Airflow environment to develop and test DAGs, custom plugins, and dependencies before deploying to Amazon MWAA, it's recommended you install and use the MWAA CLI utility
+* To run the CLI, see the [aws-mwaa-local-runner](https://github.com/aws/aws-mwaa-local-runner) on GitHub
