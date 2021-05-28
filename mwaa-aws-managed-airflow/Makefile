@@ -44,7 +44,7 @@ create_public_mwaa:
 	$(info [+] Create a public MWAA instace)
 	aws cloudformation deploy \
 	--profile ${AWS_PROFILE} \
-	--stack-name mwaa-airflow-public-mwaa-v${VERSION} \
+	--stack-name pf-dev-v1-mwaa-airflow-public-mwaa-v${VERSION} \
 	--template-file cfn/public-mwaa.yml \
 	--capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
 	--parameter-overrides EnvironmentName=${MWAA_ENV_NAME}

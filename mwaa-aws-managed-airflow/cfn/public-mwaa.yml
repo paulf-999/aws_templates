@@ -42,6 +42,7 @@ Resources:
       SourceBucketArn: !ImportValue MWAAEnvironmentS3BucketArn
       ExecutionRoleArn: !ImportValue MwaaExecutionRoleArn
       DagS3Path: dags
+      PluginsS3Path: plugins.zip
       RequirementsS3Path: requirements.txt
       NetworkConfiguration:
         SecurityGroupIds:
