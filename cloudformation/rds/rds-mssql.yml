@@ -25,6 +25,12 @@ Parameters:
   AllocatedStorage:
     Default: 20
     Type: String
+  MyVPC:
+    Type: String
+    Description: name of the VPC ID to put the RDS instance in
+  MyIP:
+    Type: String
+    Description: My IP address, to be used for creating an RDS instance
 
 Resources:
   # Create an RDS instance
@@ -40,3 +46,23 @@ Resources:
       MasterUsername: !Ref DBUser
       MasterUserPassword: !Ref DBPassword
       PubliclyAccessible: Yes
+      VPCSecurityGroups:
+      - Ref: SecurityGroup
+
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: SG-MSSQL-DB
+      GroupDescription: SG for the MSSQL db instance
+      VpcId:
+        Ref: MyVPC
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 1433
+        ToPort: 1433
+        CidrIp: !Ref MyIP
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 0
+        ToPort: 65535
+        CidrIp: 0.0.0.0/0

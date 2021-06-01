@@ -12,8 +12,8 @@ sm_secret_name = 'airflow/connections/mwaa-connection'
 
 default_args = {
     'owner': 'airflow',
-    'start_date': days_ago(1),
-    'depends_on_past': False
+    'depends_on_past': False,
+    'start_date': days_ago(1)
 }
 
 ### Gets the secret from Secrets Manager
