@@ -28,7 +28,7 @@ Parameters:
   MyVPC:
     Type: String
     Description: name of the VPC ID to put the RDS instance in
-  MyIP:
+  MyCidrIP:
     Type: String
     Description: My IP address, to be used for creating an RDS instance
 
@@ -60,7 +60,7 @@ Resources:
       - IpProtocol: tcp
         FromPort: 1433
         ToPort: 1433
-        CidrIp: !Ref MyIP
+        CidrIp: !Ref MyCidrIP
       SecurityGroupEgress:
       - IpProtocol: tcp
         FromPort: 0

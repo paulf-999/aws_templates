@@ -13,5 +13,5 @@ create_mssql_instance:
 	--stack-name rds-mssql-instance-v${VERSION} \
 	--template-file rds-mssql.yml \
 	--parameter-overrides MyVPC=${VPC} \
-	MyIP=${IP} \
+	MyCidrIP=${IP} \
 	DBPassword=${PWD}
