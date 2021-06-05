@@ -1,0 +1,103 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  This template sets up AWS DMS Replication Instance.
+  It stores the ARN of the instance as Export value of Output parameter.
+Parameters:
+  VPCID:
+    Description: Name of the VPC to use
+    Type: String
+  DMSVpcSubnetIds:
+    Type: CommaDelimitedList
+    Description: "Comma separated values of Subnet id's to attach to replication instance"
+  DMSRepinstanceId:
+    Description: Name of the rep instance ID
+    Type: String
+  DmsRepinstancePublicAccesibility:
+    Type: String
+    Description: Replication Instance Public Accessibility 
+    Default: 'false'
+  DmsRepinstanceClass:
+    Type: String
+    Description: Replication Instance Class
+    AllowedValues: 
+      #General Purpose
+      - dms.t3.micro
+      - dms.t3.small
+      - dms.t3.medium
+      - dms.t3.large
+      #Compute Optimized
+      - dms.c4.large
+      - dms.c4.xlarge
+      - dms.c4.2xlarge
+      - dms.c4.4xlarge
+      #Memory Optimized
+      - dms.r4.large
+      - dms.r4.xlarge
+      - dms.r4.2xlarge
+      - dms.r4.4xlarge
+      - dms.r4.8xlarge
+
+Resources:
+  DMSVpcRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: dms-vpc-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - dms.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonDMSVPCManagementRole
+      Path: "/"
+  DMSReplicationSubnetGroup:
+    Type: AWS::DMS::ReplicationSubnetGroup
+    DependsOn: DMSVpcRole
+    Properties:
+      ReplicationSubnetGroupDescription: Subnets available for DMS
+      ReplicationSubnetGroupIdentifier: DMSVpcSubnetGroupId
+      SubnetIds: !Ref DMSVpcSubnetIds
+  DmsReplicationInstance:
+    Type: AWS::DMS::ReplicationInstance
+    Properties: 
+      AvailabilityZone: 
+        Fn::Select: 
+        - 0
+        - Fn::GetAZs: ""
+      PubliclyAccessible: !Ref DmsRepinstancePublicAccesibility
+      ReplicationInstanceClass: !Ref DmsRepinstanceClass
+      ReplicationInstanceIdentifier: !Ref DMSRepinstanceId
+      ReplicationSubnetGroupIdentifier: !Ref DMSReplicationSubnetGroup
+      VpcSecurityGroupIds: 
+        - !Ref SecurityGroup
+
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: agdf-dms-rep-instance-sg
+      GroupDescription: 'AGDF: SG for DMS replication instance'
+      VpcId: !Ref VPCID
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 0
+        ToPort: 65535
+        CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: agdf-dms-rep-instance-sg
+
+Outputs:
+  DmsReplicationInstanceArn:
+    Description: 'DMS Repliction Instance Arn'
+    Value: !Ref DmsReplicationInstance
+    Export:
+      Name: DmsReplicationInstanceArn
+  DmsReplicationInstanceId:
+    Description: 'DMS Repliction Instance Arn'
+    Value: !Ref DMSRepinstanceId
+    Export:
+      Name: DmsReplicationInstanceId

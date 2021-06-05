@@ -1,0 +1,159 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Description: >
+  This template sets up AWS Lambda Function.
+  It stores the name of the Lambda function as an Output export parameter value.
+Parameters:
+  Stage:
+    Description: Name of the environment which this service is a part of; this could be dev/test/prod
+    Type: String
+  Branch:
+    Description: Name of the git-branch from which this stack is being deployed; this could be master/featurebranch-1 
+    Type: String
+  AppName:
+    Description: Name of the application; this could be data-accelerator/compliance 
+    Type: String
+  ServiceName:
+    Description: Name of the application; this could be data-accelerator/compliance 
+    Type: String
+  StaxWorkloadName:
+    Description: Name of the current Stax Workload / CloudFormation Stack Name
+    Type: String
+  ## Template Specific Parameters
+  DmsRepTaskWorkloadName:
+    Description: Name of the workload that creates Replication Task 
+    Type: String
+    Default: "<None>"
+  DmsRepTaskId:
+    Description: Dms Replication Task Identifier
+    Type: String
+    Default: "<None>"
+  DmsMigrationType:
+    Description: DMS Migration Type
+    Type: String
+  S3ArtifactBucket:  
+    Description: DMS Lambda Task Trigger Script Bucket Name
+    Type: String
+  DmsLambdaTasktrigScriptname:
+    Description: DMS Lambda Task Trigger Script Name
+    Type: String
+    Default: dms_task_trigger.zip
+  DmsTasktrigLambdaCronSchedule:
+    Description: DMS Lambda Task Trigger Cron Schedule
+    Type: String
+
+Conditions:
+  DmsRepTaskWorkloadNameDefined: !Not [ !Equals [ !Ref DmsRepTaskWorkloadName, "<None>" ] ]
+
+Resources:
+  DmsTaskTriggerLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+      Policies:
+        - PolicyName: "CloudWatch-Access"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: "Allow"
+                Action:
+                  - logs:CreateLogStream
+                  - logs:CreateLogGroup
+                  - logs:PutLogEvents
+                Resource: "arn:aws:logs:*:*:*"
+        - PolicyName: "DMS-Task-Access"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:                
+              -
+                Effect: Allow
+                Action:
+                  - dms:StartReplicationTask
+                  - dms:DescribeReplicationTasks
+                Resource: "*"
+      Tags:
+        - Key: appname
+          Value: !Ref AppName
+        - Key: servicename
+          Value: !Ref ServiceName
+        - Key: stage
+          Value: !Ref Stage
+        - Key: branch
+          Value: !Ref Branch
+
+  DmsTaskTriggerLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "da-dms-tasktrigger-${Stage}-${Branch}-${ServiceName}"
+      Handler: dms_task_trigger.handler
+      Runtime: python3.7
+      Role: !GetAtt DmsTaskTriggerLambdaRole.Arn
+      Environment:
+        Variables:
+          dms_task_name: !If 
+                          - DmsRepTaskWorkloadNameDefined 
+                          - Fn::ImportValue: !Sub "da:${Stage}:${Branch}:${DmsRepTaskWorkloadName}:DmsRepTaskId"
+                          - !Ref DmsRepTaskId
+          migration_refresh_type: !Ref DmsMigrationType
+          cdc_start_time: 'na'
+          start_replication_task_type: 'start-replication'
+      Code: 
+        S3Bucket: !Ref S3ArtifactBucket
+        S3Key: !Ref DmsLambdaTasktrigScriptname
+      MemorySize: 128
+      Timeout: 900
+      Tags:
+        - Key: appname
+          Value: !Ref AppName
+        - Key: servicename
+          Value: !Ref ServiceName
+        - Key: stage
+          Value: !Ref Stage
+        - Key: branch
+          Value: !Ref Branch
+
+  DmsTaskTriggerSchedulerEventRule:
+    Type: AWS::Events::Rule
+    Properties: 
+      Name: !Sub "agdf-scheduled-dms-task"
+      Description: Cloudwatch event rule to trigger the DMS Task Trigger
+      ScheduleExpression: !Ref DmsTasktrigLambdaCronSchedule
+      State: "ENABLED"
+      Targets: 
+        - Arn: !GetAtt DmsTaskTriggerLambda.Arn
+          Id: "DmsTaskTrigger" 
+      
+  PermissionForEventsToInvokeLambda: 
+    Type: AWS::Lambda::Permission
+    Properties: 
+      FunctionName: !Ref DmsTaskTriggerLambda
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt DmsTaskTriggerSchedulerEventRule.Arn
+          
+  AsynchConfigforDmsTrigLambda:
+    Type: AWS::Lambda::EventInvokeConfig
+    Properties:
+      FunctionName: !Ref DmsTaskTriggerLambda
+      MaximumRetryAttempts: 0
+      Qualifier: $LATEST
+
+# Output Parameter      
+Outputs:
+  LambdaDmsTaskTriggerFunctionName:
+    Description: "Lambda Function Name to trigger the Dms Task"
+    Value: !Ref DmsTaskTriggerLambda
+    Export:
+      Name: !Sub "da:${Stage}:${Branch}:${StaxWorkloadName}:LambdaDmsTaskTriggerFunctionName"

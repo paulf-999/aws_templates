@@ -1,0 +1,123 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  This template sets up AWS DMS Target EndPoint for S3 bucket.
+  It stores the ARN of the target endpoint as an SSM Parameter
+Parameters:
+  Stage:
+    Description: Name of the environment which this service is a part of; this could be dev/test/prod
+    Type: String
+  Branch:
+    Description: Name of the git-branch from which this stack is being deployed; this could be master/featurebranch-1 
+    Type: String
+  AppName:
+    Description: Name of the application; this could be data-accelerator/compliance 
+    Type: String
+  ServiceName:
+    Description: Name of the application; this could be data-accelerator/compliance 
+    Type: String
+  StaxWorkloadName:
+    Description: Name of the current Stax Workload / CloudFormnation Stack Name
+    Type: String
+  ## Template Specific Parameters
+  BucketWorkloadName:
+    Description: Workload name for the Target Bucket Creation 
+    Type: String
+    Default: "<None>"
+  BucketName:
+    Description: S3 bucket name
+    Type: String
+  BucketFolderName:
+    Description: Raw Bucket Folder Name
+    Type: String
+    Default: "<None>"
+  TargetExtraConnectionAttributes:
+    Description: DMS Target End Point Extra Connection Attributes
+    Type: String
+    Default: "<None>"
+  EndPointName:
+    Description: Name of "DMS S3 Target End Point
+    Type: String
+
+Conditions:
+  BucketWorkloadNameDefined: !Not [ !Equals [ !Ref BucketWorkloadName, "<None>" ] ]
+  BucketFolderNameDefined: !Not [ !Equals [ !Ref BucketFolderName, "<None>" ] ]
+  TargetExtraConnectionAttributesDefined: !Not [ !Equals [ !Ref TargetExtraConnectionAttributes, "<None>" ] ]
+
+Resources:
+  DmsJobRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - dms.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: DMSS3BasicReadWriteAccess
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                  - "s3:ListBucket"
+                  - "s3:DeleteObject"
+                  - "s3:PutObjectTagging"
+                Resource:
+                  - !Sub 
+                    - "arn:aws:s3:::${RawBucket}*"
+                    - RawBucket: !If
+                        - BucketWorkloadNameDefined
+                        - Fn::ImportValue: !Sub "da:${Stage}:${Branch}:${BucketWorkloadName}:LakeFormationBucket"
+                        - !Ref BucketName
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonRDSReadOnlyAccess
+      Path: "/"  
+  DmsS3TargetEndpoint:
+    Type: AWS::DMS::Endpoint
+    Properties: 
+      EndpointIdentifier: !Ref EndPointName
+      EndpointType: target
+      EngineName: s3
+      S3Settings: 
+        BucketName: !If
+                    - BucketWorkloadNameDefined
+                    - Fn::ImportValue: !Sub "da:${Stage}:${Branch}:${BucketWorkloadName}:LakeFormationBucket"
+                    - !Ref BucketName
+        BucketFolder: !If 
+                        - BucketFolderNameDefined 
+                        - !Ref BucketFolderName
+                        - AWS::NoValue
+        ServiceAccessRoleArn: !GetAtt DmsJobRole.Arn
+      ExtraConnectionAttributes: !If 
+                        - TargetExtraConnectionAttributesDefined 
+                        - !Ref TargetExtraConnectionAttributes
+                        - AWS::NoValue
+      SslMode: none      
+      Tags:
+        - Key: appname
+          Value: !Ref AppName
+        - Key: servicename
+          Value: !Ref ServiceName
+        - Key: stage
+          Value: !Ref Stage
+        - Key: branch
+          Value: !Ref Branch
+  
+# Output Parameter
+Outputs:
+  DmsTargetEndpointArn:
+    Description: "DMS S3 Target End Point Arn"
+    Value: !Ref DmsS3TargetEndpoint
+    Export:
+      Name: !Sub "da:${Stage}:${Branch}:${StaxWorkloadName}:DmsTargetEndpointArn"
+  DmsTargetEndpointId:
+    Description: "DMS S3 Target End Point Identifier"
+    Value: !Sub "da-target-s3-${Stage}-${Branch}-${ServiceName}-${StaxWorkloadName}"
+    Export:
+      Name: !Sub "da:${Stage}:${Branch}:${StaxWorkloadName}:DmsTargetEndpointId"

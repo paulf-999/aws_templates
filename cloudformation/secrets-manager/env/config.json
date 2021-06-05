@@ -1,0 +1,13 @@
+{
+    "Parameters" : {
+        "SecretName": "eg-mssql-db",
+        "SrcSystem": "bikestore",
+        "Engine": "sqlserver",
+        "DbName": "${MY_DB}",
+        "Host": "${MY_HOST}",
+        "Port": "1433",
+        "Username": "${MY_USERNAME}",
+        "Pwd": "${MY_PWD}",
+        "Version": 1
+    }
+}

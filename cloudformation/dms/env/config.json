@@ -1,0 +1,7 @@
+{
+    "Parameters" : {
+        "VPCId": "vpc-25242e42",
+        "DMSRepId": "dms-rep-instance-eg",
+        "Version": 1
+    }
+}

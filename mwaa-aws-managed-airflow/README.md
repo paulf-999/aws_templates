@@ -75,7 +75,7 @@ The steps involved in building and executing this involve:
 
 ## 4. Hints and Tips
 
-a) Local MWAA environment
+### Local MWAA environment
 
 * To run a local Airflow environment to develop and test DAGs, custom plugins, and dependencies before deploying to Amazon MWAA, it's recommended you install and use the MWAA CLI utility
 * To run the CLI, see the [aws-mwaa-local-runner](https://github.com/aws/aws-mwaa-local-runner) on GitHub

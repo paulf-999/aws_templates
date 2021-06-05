@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  This template sets up AWS DMS Source EndPoint for RDBMS.
+  It stores the ARN of the source endpoint as Output Exported Value
+Parameters:
+  SecretName:
+    Description: Name of the Secret Manager Secret Name that stores the source DB details 
+    Type: String
+
+Resources:
+  DmsSourceEndpoint:
+    Type: AWS::DMS::Endpoint
+    Properties: 
+      EndpointType: source
+      EngineName: !Sub '{{resolve:secretsmanager:${SecretName}:SecretString:engine}}'
+      DatabaseName: !Sub '{{resolve:secretsmanager:${SecretName}:SecretString:dbname}}'
+      ServerName: !Sub '{{resolve:secretsmanager:${SecretName}:SecretString:host}}'
+      Port: !Sub '{{resolve:secretsmanager:${SecretName}:SecretString:port}}'
+      Username: !Sub '{{resolve:secretsmanager:${SecretName}:SecretString:username}}'
+      Password: !Sub '{{resolve:secretsmanager:${SecretName}:SecretString:password}}'
+      EndpointIdentifier: !Sub '${SecretName}-source-EP'
+      SslMode: none
+
+# Output Parameters
+Outputs:
+  DmsSourceEndpointArn:
+    Description: "DMS RDBMS Source End Point Arn"
+    Value: !Ref DmsSourceEndpoint
+    Export:
+      Name: DmsSourceEndpointArn
+  DmsSourceEndpointId:
+    Description: "DMS RDBMS Source End Point Identifier"
+    Value: !Sub '${SecretName}-source-EP'
+    Export:
+      Name: DmsSourceEndpointId
