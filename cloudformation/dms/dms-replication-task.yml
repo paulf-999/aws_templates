@@ -1,0 +1,97 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: >
+  This template sets up AWS DMS Replication Task.
+  It stores the ARN of the Replication Task as an Output export value
+Parameters:
+  DmsMigrationType:
+    Description: DMS Migration Type
+    Type: String
+    AllowedValues: 
+          - full-load
+          - full-load-and-cdc
+          - cdc
+  RepInstanceWorkloadName:
+    Description: Name of the workload that creates Replication Instance 
+    Type: String
+    Default: "<None>"
+  DmsReplicationInstanceArn:
+    Description: Replication Instance Arn 
+    Type: String
+    Default: "<None>"
+  SourceWorkloadName:
+    Description: Name of the workload that creates Source Workload 
+    Type: String
+    Default: "<None>"
+  DmsSourceEndpointArn:
+    Description: Source End Point Arn 
+    Type: String
+    Default: "<None>"
+  TargetWorkloadName:
+    Description: Name of the workload that creates Target Workload 
+    Type: String
+    Default: "<None>"
+  DmsTargetEndpointArn:
+    Description: Target End Point Arn 
+    Type: String
+    Default: "<None>"
+  DmsTaskTableMappings:
+    Description: DMS Task Table Mappings
+    Type: String
+  DmsRepTaskName:
+    Description: Name of the replication task
+    Type: String
+
+Resources:
+  DmsTask:
+    Type: AWS::DMS::ReplicationTask
+    Properties: 
+      MigrationType: !Ref DmsMigrationType
+      ReplicationInstanceArn: !ImportValue DmsReplicationInstanceArn
+      ReplicationTaskIdentifier: !Ref DmsRepTaskName
+      SourceEndpointArn: !ImportValue DmsSourceEndpointArn
+      TargetEndpointArn: !ImportValue DmsTargetEndpointArn
+      TableMappings: !Ref DmsTaskTableMappings
+      #ReplicationTaskSettings: '{ValidationSettings: {EnableValidation: true}}'
+      ReplicationTaskSettings: '{ "Logging": { "EnableLogging": true, "LogComponents": [{ "Id": "SOURCE_UNLOAD", "Severity": "LOGGER_SEVERITY_DEFAULT" },{ "Id": "SOURCE_CAPTURE", "Severity": "LOGGER_SEVERITY_DEFAULT" },{ "Id": "TARGET_LOAD", "Severity": "LOGGER_SEVERITY_DEFAULT" },{ "Id": "TARGET_APPLY", "Severity": "LOGGER_SEVERITY_INFO" },{ "Id": "TASK_MANAGER", "Severity": "LOGGER_SEVERITY_DEBUG" }] }, }'
+
+  DmsEventsSnsTopic: 
+    Type: AWS::SNS::Topic
+    Properties: 
+      TopicName: dms-task-statechange-topic
+
+  DmsTaskEventSubscription:
+    DependsOn: DmsTask
+    Type: AWS::DMS::EventSubscription
+    Properties:
+      SubscriptionName: dms-task-statechange-topic
+      Enabled: true
+      SourceType: replication-task
+      EventCategories:
+        - state change
+      SnsTopicArn: !Ref DmsEventsSnsTopic
+      SourceIds: !Ref DmsRepTaskName
+          
+# Output Parameter      
+Outputs:
+  DmsRepTaskArn:
+    Description: "DMS Replication Task Arn"
+    Value: !Ref DmsTask
+    Export:
+      Name: DmsRepTaskArn
+  DmsRepTaskId:
+    Description: "DMS Replication Task Id"
+    Value: !Ref DmsRepTaskName
+    Export:
+      Name: DmsRepTaskId
+  SnsTopicArn:
+    Description: "SNS Topic Arn for DMS Replication Task State Change Event"
+    Value: !Ref DmsEventsSnsTopic
+    Export:
+      Name: DmsTaskSnsTopicArn
+  SnsTopicName:
+    Description: "SNS Topic Name for DMS Replication Task State Change Event"
+    Value: dms-task-statechange-topic
+    Export:
+      Name: DmsTaskSnsTopicName
+
