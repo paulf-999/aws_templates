@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  This template sets up AWS DMS Target EndPoint for S3 bucket.
+  It stores the ARN of the target endpoint as an SSM Parameter
+Parameters:
+  BucketName:
+    Description: S3 bucket name
+    Type: String
+  BucketFolderName:
+    Description: Raw Bucket Folder Name
+    Type: String
+    Default: "<None>"
+  EndPointName:
+    Description: Name of "DMS S3 Target End Point
+    Type: String
+
+Conditions:
+  BucketFolderNameDefined: !Not [ !Equals [ !Ref BucketFolderName, "<None>" ] ]
+
+Resources:
+  DmsJobRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - dms.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: DMSS3BasicReadWriteAccess
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                  - "s3:ListBucket"
+                  - "s3:DeleteObject"
+                  - "s3:PutObjectTagging"
+                Resource:
+                  - !Sub 
+                    - "arn:aws:s3:::${RawBucket}*"
+                    - RawBucket: !Ref BucketName
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonRDSReadOnlyAccess
+      Path: "/"  
+  DmsS3TargetEndpoint:
+    Type: AWS::DMS::Endpoint
+    Properties: 
+      EndpointIdentifier: !Ref EndPointName
+      EndpointType: target
+      EngineName: s3
+      S3Settings: 
+        BucketName: !Ref BucketName
+        BucketFolder: !If 
+                        - BucketFolderNameDefined 
+                        - !Ref BucketFolderName
+                        - AWS::NoValue
+        ServiceAccessRoleArn: !GetAtt DmsJobRole.Arn
+      SslMode: none
+  
+# Output Parameters
+Outputs:
+  DmsTargetEndpointArn:
+    Description: "DMS S3 Target End Point Arn"
+    Value: !Ref DmsS3TargetEndpoint
+    Export:
+      Name: DmsTargetEndpointArn
+  DmsTargetEndpointId:
+    Description: "DMS S3 Target End Point Identifier"
+    Value: !Ref EndPointName
+    Export:
+      Name: DmsTargetEndpointId

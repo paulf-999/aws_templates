@@ -2,6 +2,7 @@
     "Parameters" : {
         "VPCId": "vpc-25242e42",
         "DMSRepId": "dms-rep-instance-eg",
+        "TargetS3Bucket": "pf-airflow-mssql-eg",
         "Version": 1
     }
 }
