@@ -1,4 +1,4 @@
-default: create_dms_instance
+default: create_dms_instance create_dms_src_rdbms_ep create_dms_target_s3_ep create_dms_task
 
 AWS_PROFILE=${MY_AWS_PROFILE}
 CONFIG_FILE=env/config.json
