@@ -4,6 +4,9 @@ Description: >
   This template sets up AWS DMS Replication Task.
   It stores the ARN of the Replication Task as an Output export value
 Parameters:
+  DmsRepTaskName:
+    Description: Name of the replication task
+    Type: String
   DmsMigrationType:
     Description: DMS Migration Type
     Type: String
@@ -11,36 +14,11 @@ Parameters:
           - full-load
           - full-load-and-cdc
           - cdc
-  RepInstanceWorkloadName:
-    Description: Name of the workload that creates Replication Instance 
-    Type: String
-    Default: "<None>"
-  DmsReplicationInstanceArn:
-    Description: Replication Instance Arn 
-    Type: String
-    Default: "<None>"
-  SourceWorkloadName:
-    Description: Name of the workload that creates Source Workload 
-    Type: String
-    Default: "<None>"
-  DmsSourceEndpointArn:
-    Description: Source End Point Arn 
-    Type: String
-    Default: "<None>"
-  TargetWorkloadName:
-    Description: Name of the workload that creates Target Workload 
-    Type: String
-    Default: "<None>"
-  DmsTargetEndpointArn:
-    Description: Target End Point Arn 
-    Type: String
-    Default: "<None>"
   DmsTaskTableMappings:
     Description: DMS Task Table Mappings
     Type: String
-  DmsRepTaskName:
-    Description: Name of the replication task
-    Type: String
+
+#template = { \"rule-type\": \"selection\", \"rule-id\": \"1\", \"rule-name\": \"1\", \"object-locator\": { \"schema-name\": \"dbo\", \"table-name\": \"CustomerBin\" }, \"rule-action\": \"include\" }
 
 Resources:
   DmsTask:
@@ -70,7 +48,9 @@ Resources:
       EventCategories:
         - state change
       SnsTopicArn: !Ref DmsEventsSnsTopic
-      SourceIds: !Ref DmsRepTaskName
+      SourceIds: !Split 
+        - ","
+        - !Ref DmsRepTaskName
           
 # Output Parameter      
 Outputs:

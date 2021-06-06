@@ -9,13 +9,9 @@ Parameters:
   BucketFolderName:
     Description: Raw Bucket Folder Name
     Type: String
-    Default: "<None>"
   EndPointName:
     Description: Name of "DMS S3 Target End Point
     Type: String
-
-Conditions:
-  BucketFolderNameDefined: !Not [ !Equals [ !Ref BucketFolderName, "<None>" ] ]
 
 Resources:
   DmsJobRole:
@@ -57,10 +53,7 @@ Resources:
       EngineName: s3
       S3Settings: 
         BucketName: !Ref BucketName
-        BucketFolder: !If 
-                        - BucketFolderNameDefined 
-                        - !Ref BucketFolderName
-                        - AWS::NoValue
+        BucketFolder: !Ref BucketFolderName
         ServiceAccessRoleArn: !GetAtt DmsJobRole.Arn
       SslMode: none
   
