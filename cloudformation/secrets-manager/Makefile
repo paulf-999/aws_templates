@@ -17,7 +17,7 @@ create_sm_entry:
 	$(info [+] Create a secrets manager entry)
 	aws cloudformation deploy \
 	--profile ${AWS_PROFILE} \
-	--stack-name eg-db-secret-v${VERSION} \
+	--stack-name secrets-manager-eg-db-secret-v${VERSION} \
 	--template-file secrets-manager-rdbms.yml \
 	--parameter-overrides SecretName=${SECRETNAME} \
 	SrcSystem=${SOURCE_SYSTEM} \

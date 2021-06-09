@@ -1,4 +1,4 @@
-default: create_airflow_dev_env
+default: create_mssql_instance run_sql_cmds create_dms_job_and_components
 
 AWS_PROFILE=${MY_AWS_PROFILE}
 CONFIG_FILE=env/config.json
@@ -18,9 +18,7 @@ $(eval PWD=$(shell jq '.Parameters.Pwd' ${CONFIG_FILE}))
 
 #template for MSSQL commands
 MSSQL_CMD=sqlcmd -S ${HOST} -U ${USER} -P "${PWD}" -y 30 -Y 30
-
-create_airflow_dev_env:
-	make -f rds/Makefile
+DMS_IP_TBLS={ "rule-type": "selection", "rule-id": "1", "rule-name": "1", "object-locator": { "schema-name": "production", "table-name": "brands" }, "rule-action": "include" }
 
 create_mssql_instance:
 	$(info [+] Create an Airflow dev env)
@@ -42,7 +40,21 @@ run_sql_cmds:
 	${MSSQL_CMD} -i rds/sql_example/mssql/2_load_data.sql
 
 create_dms_job_and_components:
-	$(info [+] create_dms_instance)
+	$(info [+] Create a secrets manager entry)
+	aws cloudformation deploy \
+	--profile ${AWS_PROFILE} \
+	--stack-name secrets-manager-eg-db-secret-v${VERSION} \
+	--template-file secrets-manager/secrets-manager-rdbms.yml \
+	--parameter-overrides SecretName=${SECRETNAME} \
+	SrcSystem=${SOURCE_SYSTEM} \
+	engine=${ENGINE} \
+	dbname=${DBNAME} \
+	host=${HOST} \
+	port=${PORT} \
+	username=${USERNAME} \
+	password=${PWD}
+
+	$(info [+] create dms instance)
 	aws cloudformation deploy \
 	--profile ${AWS_PROFILE} \
 	--stack-name dms-rep-instance-v${VERSION} \
@@ -53,20 +65,6 @@ create_dms_job_and_components:
 	DMSRepinstanceId=${DMSREPID} \
 	DmsRepinstancePublicAccesibility=True \
 	DmsRepinstanceClass=dms.t3.micro
-
-	$(info [+] Create a secrets manager entry)
-	aws cloudformation deploy \
-	--profile ${AWS_PROFILE} \
-	--stack-name eg-db-secret-v${VERSION} \
-	--template-file secrets-manager/secrets-manager-rdbms.yml \
-	--parameter-overrides SecretName=${SECRETNAME} \
-	SrcSystem=${SOURCE_SYSTEM} \
-	engine=${ENGINE} \
-	dbname=${DBNAME} \
-	host=${HOST} \
-	port=${PORT} \
-	username=${USERNAME} \
-	password=${PWD}
 
 	$(info [+] Create a DMS RDBMS source EP)
 	aws cloudformation deploy \
@@ -94,7 +92,7 @@ create_dms_job_and_components:
 	DmsMigrationType=full-load \
 	DmsTaskTableMappings='{"rules":[${DMS_IP_TBLS}]}'
 
-# 5. Start Airflow bits
+# 5. Start Airflow bits, more just for reference
 start_webserver:
 	$(info [+] Start the web server, default port is 8080)
 	airflow webserver --port 8080

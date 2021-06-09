@@ -1,8 +1,8 @@
 {
     "Parameters" : {
         "VPCId": "vpc-25242e42",
-        "Ip": "dms-rep-instance-eg",
-        "DMSRepId": "${MY_IP_CIDR}",
+        "Ip": "${MY_IP_CIDR}",
+        "DMSRepId": "dms-rep-instance-eg",
         "TargetS3Bucket": "pf-airflow-mssql-eg",
         "SecretName": "eg-mssql-db",
         "SrcSystem": "bikestore",
