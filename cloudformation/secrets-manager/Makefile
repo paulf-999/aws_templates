@@ -14,7 +14,7 @@ $(eval PWD=$(shell jq '.Parameters.Pwd' ${CONFIG_FILE}))
 $(eval VERSION=$(shell jq '.Parameters.Version' ${CONFIG_FILE}))
 
 create_sm_entry:
-	$(info [+] Create a public VPC)
+	$(info [+] Create a secrets manager entry)
 	aws cloudformation deploy \
 	--profile ${AWS_PROFILE} \
 	--stack-name eg-db-secret-v${VERSION} \

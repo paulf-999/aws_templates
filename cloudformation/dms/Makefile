@@ -12,7 +12,7 @@ $(eval VERSION=$(shell jq '.Parameters.Version' ${CONFIG_FILE}))
 DMS_IP_TBLS={ "rule-type": "selection", "rule-id": "1", "rule-name": "1", "object-locator": { "schema-name": "production", "table-name": "brands" }, "rule-action": "include" }
 
 create_dms_instance:
-	$(info [+] Create a public VPC)
+	$(info [+] Create a DMS instance)
 	aws cloudformation deploy \
 	--profile ${AWS_PROFILE} \
 	--stack-name dms-rep-instance-v${VERSION} \
