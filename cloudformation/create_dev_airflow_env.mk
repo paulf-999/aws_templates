@@ -109,10 +109,10 @@ create_airflow_variables:
 
 delete_airflow_dev_env:
 	aws cloudformation --profile ${AWS_PROFILE} delete-stack --stack-name dms-task-v1
-	#sleep 90	
+	sleep 90	
 	aws cloudformation --profile ${AWS_PROFILE} delete-stack --stack-name dms-rep-instance-v1
-	#aws cloudformation --profile ${AWS_PROFILE} delete-stack --stack-name dms-target-ep-v1
-	#aws cloudformation --profile ${AWS_PROFILE} delete-stack --stack-name dms-src-ep-v1
-	#sleep 90
+	aws cloudformation --profile ${AWS_PROFILE} delete-stack --stack-name dms-target-ep-v1
+	aws cloudformation --profile ${AWS_PROFILE} delete-stack --stack-name dms-src-ep-v1
+	sleep 90
 	aws cloudformation --profile ${AWS_PROFILE} delete-stack --stack-name secrets-manager-eg-db-secret-v1
 	aws cloudformation --profile ${AWS_PROFILE} delete-stack --stack-name rds-mssql-instance-v1
