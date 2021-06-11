@@ -40,7 +40,7 @@ run_sql_cmds:
 	${MSSQL_CMD} -i rds/sql_example/mssql/2_load_data.sql
 
 create_dms_job_and_components:
-	$(info [+] Create a secrets manager entry)
+	$(info [+] Create a Secrets Manager entry)
 	aws cloudformation deploy \
 	--profile ${AWS_PROFILE} \
 	--stack-name secrets-manager-eg-db-secret-v${VERSION} \
@@ -54,7 +54,7 @@ create_dms_job_and_components:
 	username=${USERNAME} \
 	password=${PWD}
 
-	$(info [+] create dms instance)
+	$(info [+] create a DMS replication instance)
 	aws cloudformation deploy \
 	--profile ${AWS_PROFILE} \
 	--stack-name dms-rep-instance-v${VERSION} \
@@ -101,3 +101,18 @@ start_scheduler:
 	$(info [+] Start the scheduler)
 	# open a new terminal or else run webserver with ``-D`` option to run it as a daemon
 	airflow scheduler
+
+create_airflow_variables:
+	$(info [+] Create some (example) Airflow variables)
+	@airflow variables set AWS_ACCESS_KEY ${AWS_ACCESS_KEY}
+	@airflow variables set AWS_SECRET_ACCESS_KEY ${AWS_SECRET_ACCESS_KEY}
+
+delete_airflow_dev_env:
+	aws cloudformation --profile ${AWS_PROFILE} delete-stack --stack-name dms-task-v1
+	#sleep 90	
+	aws cloudformation --profile ${AWS_PROFILE} delete-stack --stack-name dms-rep-instance-v1
+	#aws cloudformation --profile ${AWS_PROFILE} delete-stack --stack-name dms-target-ep-v1
+	#aws cloudformation --profile ${AWS_PROFILE} delete-stack --stack-name dms-src-ep-v1
+	#sleep 90
+	aws cloudformation --profile ${AWS_PROFILE} delete-stack --stack-name secrets-manager-eg-db-secret-v1
+	aws cloudformation --profile ${AWS_PROFILE} delete-stack --stack-name rds-mssql-instance-v1
