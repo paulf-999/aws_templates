@@ -1,0 +1,179 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+  CodeBuild template
+
+Parameters:
+  PipelineName:
+    Type: String
+    Default: eg-pipeline
+  GitRepoOwner:
+    Type: String
+  GitRepoName:
+    Type: String
+  GitBranch:
+    Type: String
+    Default: master
+  OAuthToken:
+    Type: String
+  S3ArtefactBucketName:
+    Type: String
+    Default: codepipeline-artefact-store
+  CodeBuildProjectName:
+    Type: String
+
+Resources:
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Ref CodeBuildProjectName
+      Artifacts:
+          Type: CODEPIPELINE
+      Environment:
+        Image: aws/codebuild/standard:4.0
+        ComputeType: BUILD_GENERAL1_SMALL
+        Type: LINUX_CONTAINER
+      ServiceRole: !Ref CodeBuildRole
+      Source:
+        Type: CODEPIPELINE
+
+  CodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    DependsOn: [CodeBuildProject, S3ArtefactsBucket]
+    Properties:
+      Name: !Ref PipelineName
+      RoleArn: !GetAtt
+        - CodePipelineServiceRole
+        - Arn
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: Source
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Provider: GitHub
+                Version: 1
+              Configuration:
+                Owner: !Ref GitRepoOwner
+                Repo: !Ref GitRepoName
+                Branch: !Ref GitBranch
+                OAuthToken: !Ref OAuthToken
+              OutputArtifacts:
+                - Name: SourceOutput
+
+        - Name: Build
+          Actions:
+            - Name: Build
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: 1
+              Configuration:
+                ProjectName: eg-codebuild-project
+              InputArtifacts:
+                - Name: SourceOutput
+      ArtifactStore:
+        Type: S3
+        Location: !Ref S3ArtefactsBucket
+
+  CodePipelineServiceRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: AWS-CodePipeline-Service-3
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'codecommit:CancelUploadArchive'
+                  - 'codecommit:GetBranch'
+                  - 'codecommit:GetCommit'
+                  - 'codecommit:GetUploadArchiveStatus'
+                  - 'codecommit:UploadArchive'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'codedeploy:CreateDeployment'
+                  - 'codedeploy:GetApplicationRevision'
+                  - 'codedeploy:GetDeployment'
+                  - 'codedeploy:GetDeploymentConfig'
+                  - 'codedeploy:RegisterApplicationRevision'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'codebuild:BatchGetBuilds'
+                  - 'codebuild:StartBuild'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'devicefarm:ListProjects'
+                  - 'devicefarm:ListDevicePools'
+                  - 'devicefarm:GetRun'
+                  - 'devicefarm:GetUpload'
+                  - 'devicefarm:CreateUpload'
+                  - 'devicefarm:ScheduleRun'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'lambda:InvokeFunction'
+                  - 'lambda:ListFunctions'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'iam:PassRole'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'elasticbeanstalk:*'
+                  - 'ec2:*'
+                  - 'elasticloadbalancing:*'
+                  - 'autoscaling:*'
+                  - 'cloudwatch:*'
+                  - 's3:*'
+                  - 'sns:*'
+                  - 'cloudformation:*'
+                  - 'rds:*'
+                  - 'sqs:*'
+                  - 'ecs:*'
+                Resource: '*'
+
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: codebuild.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+
+  S3ArtefactsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref S3ArtefactBucketName
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: TRUE #turns on opt 1: "Block public access to buckets and objects granted through new access control lists (ACLs)"
+        IgnorePublicAcls: TRUE #turns on opt 2: "Block public access to buckets and objects granted through any access control lists (ACLs)"
+        BlockPublicPolicy: TRUE #turns on opt 3: "Block public access to buckets and objects granted through new public bucket or access point policies"
+        RestrictPublicBuckets: TRUE #turns on opt 4: "Block public and cross-account access to buckets and objects through any public bucket or access point policies"
+      VersioningConfiguration:
+        Status: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256

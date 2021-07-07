@@ -1,0 +1,60 @@
+version: 0.2
+
+env:
+  variables:
+    ACCOUNT: "versent.ap-southeast-2"
+    ID: "PFry"
+    ROLE: "ACCOUNTADMIN"
+    WAREHOUSE: "DEVELOPER_WH"
+    HISTORY: "PFRY_DB.PUBLIC.SNOWCHANGE_CHANGE_HISTORY"
+    BRANCH: "master"
+    ROOT_DIR: "overwatch_landing"
+  parameter-store:
+    SNOWSQL_PWD: /snowflake/bikestores/
+phases:
+  #install:
+    #If you use the Ubuntu standard image 2.0 or later, you must specify runtime-versions.
+    #If you specify runtime-versions and use an image other than Ubuntu standard image 2.0, the build fails.
+    #runtime-versions:
+      # name: version
+      # name: version
+    #commands:
+      # - command
+      # - command
+  #pre_build:
+    #commands:
+      # - command
+      # - command
+  build:
+    commands:
+     - echo This is $BRANCH branch
+     - apt-get install -y libssl-dev libffi-dev
+     - pip3 install --upgrade pip
+     - pip3 install --upgrade snowflake-connector-python
+     #- python bin/snowchange.py -f ./$ROOT_DIR -a $ACCOUNT -u $ID -r $ROLE -w $WAREHOUSE -c $HISTORY --vars '{"var_env":"DEV"}' -v
+     - echo This PF test for $BRANCH Branch
+     - python bin/snowchange.py -f ./$ROOT_DIR -a $ACCOUNT -u $ID -r $ROLE -w $WAREHOUSE -c $HISTORY
+      # - command
+      # - command
+  #post_build:
+    #commands:
+      # - command
+      # - command
+#reports:
+  #report-name-or-arn:
+    #files:
+      # - location
+      # - location
+    #base-directory: location
+    #discard-paths: yes
+    #file-format: JunitXml | CucumberJson
+#artifacts:
+  #files:
+    # - location
+    # - location
+  #name: $(date +%Y-%m-%d)
+  #discard-paths: yes
+  #base-directory: location
+#cache:
+  #paths:
+    # - paths
