@@ -2,15 +2,15 @@ version: 0.2
 
 env:
   variables:
-    ACCOUNT: "versent.ap-southeast-2"
+    ACCOUNT: "km45877.ap-southeast-2"
     ID: "PFry"
     ROLE: "ACCOUNTADMIN"
     WAREHOUSE: "DEVELOPER_WH"
     HISTORY: "PFRY_DB.PUBLIC.SNOWCHANGE_CHANGE_HISTORY"
-    BRANCH: "master"
+    BRANCH: "main"
     ROOT_DIR: "overwatch_landing"
   parameter-store:
-    SNOWSQL_PWD: /snowflake/bikestores/
+    SNOWSQL_PWD: /snowflake/bikestores
 phases:
   #install:
     #If you use the Ubuntu standard image 2.0 or later, you must specify runtime-versions.

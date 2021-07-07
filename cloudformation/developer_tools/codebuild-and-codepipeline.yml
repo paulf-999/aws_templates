@@ -6,20 +6,24 @@ Description: >
 Parameters:
   PipelineName:
     Type: String
-    Default: eg-pipeline
   GitRepoOwner:
     Type: String
   GitRepoName:
     Type: String
   GitBranch:
     Type: String
-    Default: master
+    Default: main
   OAuthToken:
     Type: String
   S3ArtefactBucketName:
     Type: String
     Default: codepipeline-artefact-store
   CodeBuildProjectName:
+    Type: String
+  SnowflakePass:
+    Type: String
+    NoEcho: true
+  SSMParamName:
     Type: String
 
 Resources:
@@ -71,7 +75,7 @@ Resources:
                 Provider: CodeBuild
                 Version: 1
               Configuration:
-                ProjectName: eg-codebuild-project
+                ProjectName: !Ref CodeBuildProjectName
               InputArtifacts:
                 - Name: SourceOutput
       ArtifactStore:
@@ -177,3 +181,11 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
+
+  SSMParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Ref SSMParamName
+      Type: String
+      Tier: Standard
+      Value: !Ref SnowflakePass

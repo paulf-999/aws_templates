@@ -14,4 +14,6 @@ create_codebuild_and_codepipeline_instances:
 	GitRepoName=dbt_cicd_demo \
 	OAuthToken=${OATH_TOKEN} \
 	CodeBuildProjectName=dbt_cicd_project_demo \
-	PipelineName=dbt_cicd_pipeline_demo
+	PipelineName=dbt_cicd_pipeline_demo \
+	SSMParamName=/snowflake/bikestores \
+	SnowflakePass=${DEMO_DBT_PASS}
