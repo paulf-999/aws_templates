@@ -2,8 +2,10 @@
 
 AWS scripts, cfn templates & misc files I've collated over time
 
-| Folder                    | Description                                                                                       |
-| --------------------------| --------------------------------------------------------------------------------------------------|
+### Folder contents
+
+| Folder                    | Description |
+| --------------------------| ------------|
 | CloudFormation            | CloudFormation templates |
 | Lambda                    | (Python) Lambda templates / scripts  |
-| Mwaa-aws-managed-lambda                    | CloudFormation tempates / scripts to stand up an AWS MWAA environment |
+| Mwaa-aws-managed-lambda   | CloudFormation templates / scripts to stand up an AWS MWAA environment |
