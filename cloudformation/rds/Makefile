@@ -1,5 +1,3 @@
-default: create_mssql_instance
-
 AWS_PROFILE=${MY_AWS_PROFILE}
 VERSION=1
 VPC=${MY_VPC}

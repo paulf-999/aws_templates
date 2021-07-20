@@ -1,5 +1,3 @@
-default: create_codebuild_and_codepipeline_instances
-
 AWS_PROFILE=${MY_AWS_PROFILE}
 VERSION=1
 

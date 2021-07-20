@@ -1,4 +1,4 @@
-default: create_s3_bucket create_public_vpc_mwaa create_public_mwaa gen_airflow_aws_airflow_conn_string
+all: create_s3_bucket create_public_vpc_mwaa create_public_mwaa gen_airflow_aws_airflow_conn_string
 
 AWS_PROFILE=${MY_AWS_PROFILE}
 CONFIG_FILE=env/config.json

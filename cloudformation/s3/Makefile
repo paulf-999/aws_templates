@@ -1,5 +1,3 @@
-default: create_s3_bucket
-
 AWS_PROFILE=${MY_AWS_PROFILE}
 VERSION=1
 

@@ -1,5 +1,3 @@
-default: create_sm_entry
-
 AWS_PROFILE=${MY_AWS_PROFILE}
 CONFIG_FILE=env/config.json
 

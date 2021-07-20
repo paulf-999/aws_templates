@@ -1,5 +1,3 @@
-default: example
-
 CHANGE_NAME=eg-change-s3-name
 CFN_STACK_NAME=example-stack-name
 

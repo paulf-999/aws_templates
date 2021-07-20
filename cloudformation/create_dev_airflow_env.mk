@@ -1,4 +1,4 @@
-default: create_mssql_instance run_sql_cmds create_dms_job_and_components
+all: create_mssql_instance run_sql_cmds create_dms_job_and_components
 
 AWS_PROFILE=${MY_AWS_PROFILE}
 CONFIG_FILE=env/config.json
