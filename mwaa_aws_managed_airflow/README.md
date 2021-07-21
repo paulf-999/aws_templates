@@ -1,6 +1,6 @@
 # Boilerplate for AWS MWAA (i.e. AWS managed service for Airflow)
 
-This is a streamlined version of the [AWS quick start user guide for AWS MWAA](https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html).
+This is a streamlined version of the CFN template described by the [AWS quick start user guide for AWS MWAA](https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html).
 
 ---
 
@@ -56,7 +56,7 @@ The steps involved in building and executing this involve:
 
 ---
 
-## 3. Additional info - overview of customisations to AWS MWAA quick start
+## 3. Additional info - overview of customisations to AWS MWAA quick start CFN template
 
 ### S3 bucket creation and prerequisite `requirements.txt`
 
