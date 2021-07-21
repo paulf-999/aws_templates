@@ -1,0 +1,24 @@
+name: cloudformation_linting
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  push:
+    branches:
+      - main
+    paths:
+      - 'cloudformation/**.yml'
+
+jobs:
+  cloudformation-linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.7.x"
+      - name: Install cfn-lint
+        run: pip3 install cfn-lint
+      - name: Run cfn-lint
+        run: cfn-lint *.yml
