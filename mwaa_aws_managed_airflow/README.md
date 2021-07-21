@@ -66,7 +66,7 @@ The steps involved in building and executing this involve:
 
 ### Split out the Quickstart CFN into 3 CFNs
 
-The big bang, single CFN used for the AWS quick start user guide for MWAA (https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html) isn't very user friendly and difficult to understand dependencies.
+[The big bang, single CFN used for the AWS quick start user guide for MWAA](https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html) isn't very user friendly and having spent time troubleshooting it, I've found that it's difficult to understand dependencies between the AWS components.
 
 As a result, I've Slightly streamlined version of the AWS quick start user guide for MWAA:
 
@@ -77,9 +77,8 @@ As a result, I've Slightly streamlined version of the AWS quick start user guide
 
 ### Connectivity to AWS Secrets Manager
 
-* Components have been added to provide ready-made connectivity to Secrets Manager.
-* I.e. components described in the following link have been added to the CFN template / `Makefile`: https://docs.aws.amazon.com/mwaa/latest/userguide/connections-secrets-manager.html
-* Specifically:
+* Components have been added to the to the CFN template / `Makefile`, to provide ready-made connectivity to Secrets Manager. These components correspond to the [instructions described by AWS](https://docs.aws.amazon.com/mwaa/latest/userguide/connections-secrets-manager.html).
+* Specifically, the following changes have been made:
     * The MWAA execution role has been amended to include the policy, `SecretsManagerReadWrite`
     * The Secrets Manager backend has been created as an Apache Airflow configuration option
     * and finally, the `Makefile` orchestrates:
