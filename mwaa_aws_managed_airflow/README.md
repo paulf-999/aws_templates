@@ -1,25 +1,63 @@
-# MWAA: i.e. AWS-managed-airflow
+# Boilerplate for AWS MWAA (i.e. AWS managed service for Airflow)
 
-## Overview
+Streamlined version of the [AWS quick start user guide for AWS MWAA](https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html).
 
-Streamlined version of the AWS quick start user guide for MWAA (https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html). These scrips create:
-
-* an S3 Bucket and uploads the prerequisite requirements.txt (containing the required airflow-aws package, needed for Airflow with AWS)
-* a (public) VPC inftrastructure (private VPC is WIP)
-* an AWS MWAA (Managed Workflows for Apache Airflow) environment
-* and the SecretsManager configurations
+---
 
 ## Contents
 
-1. Customisations
-    * S3 bucket creation and prerequisite `requirements.txt`
-    * Split out the single 'big bang' AWS MWAA quickstart CFN (link: (https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html) into 3 logically grouped CFNs
-    * Connectivity to AWS Secrets Manager
-2. How-to run
-3. To-dos
+1. High-level summary
+2. Getting started
+    * Prerequisites
+    * Installation
+    * How-to run
+3. Additional info - overview of customisations to AWS MWAA quick start
 4. Hints and Tips
+5. To-do's
 
-## 1. Customisations
+---
+
+## 1. High-level summary
+
+These scripts provide a streamlined version of the [AWS quick start user guide for AWS MWAA](https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html). Where executing the `Makefile` creates the following:
+
+* An S3 Bucket and uploads the prerequisite `requirements.txt` (containing the required `airflow-aws` package - required for AWS MWAA)
+* a (public) VPC infrastructure (private VPC implementation to follow)
+* an AWS MWAA (Managed Workflows for Apache Airflow) environment
+* and the configurations required to allow usage of SecretsManager within Airflow
+
+These customisations are described in greater detail within the section, '
+##### Technologies used
+
+AWS CLI, CloudFormation, AWS MWAA, SecretsManager, AWS infrastructure/networking components (VPC, subnets, security groups etc.)
+
+---
+
+## 2. Getting started
+
+### Prerequisites
+
+Before you begin, ensure you have met the following requirements:
+
+* You're using a Mac / Linux machine
+* You have admin access to an AWS account, with AWS CLI installed
+
+### Installation
+
+Update the values for the input parameters within `env/config_eg.json`, to use whatever desired names you wish to use.
+
+### How-to run
+
+The steps involved in building and executing this involve:
+
+1) At the top of the `Makefile`, provide a value for the variable:
+    * `AWS_PROFILE`: to indicate what AWS_PROFILE to use
+2) Change the input parameters within the config file, `env/config.json` (`config_eg.json` is a stripped back example, in case I've hidden config.json)
+3) Following this, run the Makefile by typing `make`!
+
+---
+
+## 3. Additional info - overview of customisations to AWS MWAA quick start
 
 ### S3 bucket creation and prerequisite `requirements.txt`
 
@@ -49,29 +87,7 @@ As a result, I've Slightly streamlined version of the AWS quick start user guide
         * the generation of the Apache Airflow AWS connection string
         * adds an entry to Secrets Manager for this connection string (using a CFN template)
 
-## 2. How-to run:
-
-The steps involved in building and executing this involve:
-
-1) At the top of the `Makefile`, provide a value for the variable:
-    * `AWS_PROFILE`: to indicate what AWS_PROFILE to use
-2) Change the input parameters within the config file, `env/config.json` (config_eg.json is a stripped back example, in case I've hidden config.json)
-3) Following this, run the Makefile by typing `make`!
-
-## 3. To do:
-
-* Setup simple example airflow DAGs, e.g. to fetch data from:
-    * secrets_manager
-        1) configure secrets manager: (done)
-        https://docs.aws.amazon.com/mwaa/latest/userguide/connections-secrets-manager.html
-        2) using a SM key for an airflow connection (in progress)
-        https://docs.aws.amazon.com/mwaa/latest/userguide/samples-secrets-manager.html
-    * DMS
-    * DBT
-    * Slack (done - but will create version to instead use an Airflow variable)
-    * convert CSV to parquet
-    * other
-* revert back to the setup, to create a private network alternative (see: https://docs.aws.amazon.com/mwaa/latest/userguide/vpc-create.html#vpc-create-template-private-only)
+---
 
 ## 4. Hints and Tips
 
@@ -79,3 +95,8 @@ The steps involved in building and executing this involve:
 
 * To run a local Airflow environment to develop and test DAGs, custom plugins, and dependencies before deploying to Amazon MWAA, it's recommended you install and use the MWAA CLI utility
 * To run the CLI, see the [aws-mwaa-local-runner](https://github.com/aws/aws-mwaa-local-runner) on GitHub
+
+## 5. To do's:
+
+* demonstrate an Airflow DAG that converts CSV to parquet
+* create a private network alternative (see: https://docs.aws.amazon.com/mwaa/latest/userguide/vpc-create.html#vpc-create-template-private-only)
