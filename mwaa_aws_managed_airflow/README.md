@@ -1,6 +1,6 @@
 # Boilerplate for AWS MWAA (i.e. AWS managed service for Airflow)
 
-Streamlined version of the [AWS quick start user guide for AWS MWAA](https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html).
+This is a streamlined version of the [AWS quick start user guide for AWS MWAA](https://docs.aws.amazon.com/mwaa/latest/userguide/quick-start.html).
 
 ---
 
