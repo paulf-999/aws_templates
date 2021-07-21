@@ -50,8 +50,7 @@ Update the values for the input parameters within `env/config_eg.json`, to use w
 
 The steps involved in building and executing this involve:
 
-1) At the top of the `Makefile`, provide a value for the variable:
-    * `AWS_PROFILE`: to indicate what AWS_PROFILE to use
+1) At the top of the `Makefile`, provide a value for the variable `AWS_PROFILE` - to indicate what AWS_PROFILE to use
 2) Change the input parameters within the config file, `env/config.json` (`config_eg.json` is a stripped back example, in case I've hidden config.json)
 3) Following this, run the Makefile by typing `make`!
 
