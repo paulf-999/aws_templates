@@ -26,7 +26,7 @@ These scripts provide a streamlined version of the [AWS quick start user guide f
 * an AWS MWAA (Managed Workflows for Apache Airflow) environment
 * and the configurations required to allow usage of SecretsManager within Airflow
 
-These customisations are described in greater detail within the section, '
+These customisations are described in greater detail within the section, 'Additional info - overview of customisations to AWS MWAA quick start CFN template`.
 ##### Technologies used
 
 AWS CLI, CloudFormation, AWS MWAA, SecretsManager, AWS infrastructure/networking components (VPC, subnets, security groups etc.)
