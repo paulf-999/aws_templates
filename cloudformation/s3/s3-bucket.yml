@@ -27,7 +27,7 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
-  
+
   S3BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -42,7 +42,7 @@ Resources:
             Principal: "*"
             Action: s3:*
             Resource:
-              - Fn::Sub: arn:aws:s3:::${S3Bucket}/*
+              - F n::Sub: arn:aws:s3:::${S3Bucket}/*
             Condition:
               Bool:
                 aws:SecureTransport: false
@@ -51,7 +51,7 @@ Resources:
             Principal: "*"
             Action: s3:PutObject
             Resource:
-              Fn::Sub: arn:aws:s3:::${S3Bucket}/*
+              Fn::S ub: arn:aws:s3:::${S3Bucket}/*
             Condition:
               # Deny if server side encryption is not AES256
               'Null':
