@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    ACCOUNT: "km45877.ap-southeast-2"
+    ACCOUNT: "km45877.ap-southeast-2 "
     ID: "PFry"
     ROLE: "ACCOUNTADMIN"
     WAREHOUSE: "DEVELOPER_WH"
