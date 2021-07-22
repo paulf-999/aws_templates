@@ -42,7 +42,7 @@ Resources:
             Principal: "*"
             Action: s3:*
             Resource:
-              - F n::Sub: arn:aws:s3:::${S3Bucket}/*
+              - Fn::Sub: arn:aws:s3:::${S3Bucket}/*
             Condition:
               Bool:
                 aws:SecureTransport: false
