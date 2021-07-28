@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths-ignore:
-      - '**/buildspec.yml'
+      - 'cloudformation/developer_tools/buildspec.yml'
 
 
 jobs:
