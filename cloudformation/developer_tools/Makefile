@@ -6,7 +6,7 @@ create_codebuild_and_codepipeline_instances:
 	aws cloudformation deploy \
 	--profile ${AWS_PROFILE} \
 	--stack-name codebuild-and-codepipeline-v${VERSION} \
-	--template-file cfn/codebuild-and-codepipeline.yml \
+	--template-file cfn/codebuild_and_codepipeline.yml \
 	--capabilities CAPABILITY_IAM \
 	--parameter-overrides GitRepoOwner=paulf-999 \
 	GitRepoName=dbt_cicd_demo \
