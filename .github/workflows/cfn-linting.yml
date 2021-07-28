@@ -19,4 +19,4 @@ jobs:
       - name: Install cfn-lint
         run: pip3 install cfn-lint
       - name: Run cfn-lint
-        run: cfn-lint ./**/*.yml --ignore-templates cloudformation/developer_tools/buildspec.yml
+        run: cfn-lint ./**/*.yml --ignore-templates ./cloudformation/developer_tools/buildspec.yml
