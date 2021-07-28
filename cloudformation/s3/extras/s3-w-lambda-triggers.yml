@@ -16,7 +16,7 @@ Parameters:
   LambdaIAMRole:
     Type: String
     Default: edp-lambda-bucket-trigger-role
-  
+
 Resources:
   S3EventTrigger:
     Type: AWS::S3::Bucket
@@ -44,10 +44,9 @@ Resources:
       Action: lambda:InvokeFunction
       FunctionName: !Ref LambdaFunc
       Principal: s3.amazonaws.com
-  
+
   LambdaFunc:
     Type: AWS::Lambda::Function
-    DependsOn: LambdaExecRole
     Properties:
       FunctionName: !Ref LambdaFunctionName
       Handler: index.lambda_handler
@@ -97,7 +96,7 @@ Resources:
               s3_bucket = s3_resource.Bucket(bucket_name)
 
               logging.debug(f"Function finished: lambda_handler() finished in {round(time() - START_TIME, 2)} seconds")
-  
+
   LambdaExecRole:
     Type: AWS::IAM::Role
     Properties:
