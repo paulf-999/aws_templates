@@ -1,6 +1,6 @@
 name: cloudformation_linting
 on:
-  # Trigger the workflow on push or pull request,
+  # Trigger the workflow on push requests,
   # but only for the main branch
   push:
     branches:

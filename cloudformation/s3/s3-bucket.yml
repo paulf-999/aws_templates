@@ -51,7 +51,7 @@ Resources:
             Principal: "*"
             Action: s3:PutObject
             Resource:
-              Fn::S ub: arn:aws:s3:::${S3Bucket}/*
+              Fn::Sub: arn:aws:s3:::${S3Bucket}/*
             Condition:
               # Deny if server side encryption is not AES256
               'Null':
