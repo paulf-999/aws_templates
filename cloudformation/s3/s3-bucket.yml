@@ -10,6 +10,7 @@ Description: >
 Parameters:
   S3BucketName:
     Type: String
+    Description: Name to use for the S3 bucket
 
 Resources:
   S3Bucket:

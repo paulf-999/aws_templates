@@ -1,3 +1,17 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+  S3 bucket with a bucket policy
+
+Parameters:
+  S3BucketName:
+    Type: String
+    Description: Name to use for the S3 bucket
+  S3Versioning:
+    Type: String
+  BlockPublicAccess:
+    Type: String
+
 Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
@@ -5,7 +19,7 @@ Resources:
     # DeletionPolicy: !Ref S3BucketDeletionPolicy
     DeletionPolicy: Delete
     Properties:
-      BucketName: !Sub "${AWS::AccountId}-${BucketSuffix}"
+      BucketName: !Ref S3BucketName
       AccessControl: Private
       VersioningConfiguration:
         Status: !Ref S3Versioning

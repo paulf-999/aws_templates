@@ -29,31 +29,7 @@ Parameters:
     Description: The IP range (CIDR notation) for the private subnet in the second Availability Zone
     Type: String
     Default: 10.192.21.0/24
-  MaxWorkerNodes:
-    Description: The maximum number of workers that can run in the environment
-    Type: Number
-    Default: 2
-  DagProcessingLogs:
-    Description: Log level for DagProcessing
-    Type: String
-    Default: INFO
-  SchedulerLogsLevel:
-    Description: Log level for SchedulerLogs
-    Type: String
-    Default: INFO
-  TaskLogsLevel:
-    Description: Log level for TaskLogs
-    Type: String
-    Default: INFO
-  WorkerLogsLevel:
-    Description: Log level for WorkerLogs
-    Type: String
-    Default: INFO
-  WebserverLogsLevel:
-    Description: Log level for WebserverLogs
-    Type: String
-    Default: INFO
-    
+
 Resources:
   #####################################################################################################################
   # CREATE VPC
@@ -234,7 +210,7 @@ Resources:
       VpcId: !Ref VPC
       GroupDescription: !Sub "Security Group for Amazon MWAA Environment ${EnvironmentName}-MwaaEnvironment"
       GroupName: !Sub "airflow-security-group-${EnvironmentName}-MwaaEnvironment"
-  
+
   SecurityGroupIngress:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:

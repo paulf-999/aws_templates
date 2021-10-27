@@ -48,7 +48,7 @@ Resources:
 
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
-    DependsOn: [CodeBuildProject, S3ArtefactsBucket]
+    DependsOn: [CodeBuildProject]
     Properties:
       Name: !Ref PipelineName
       RoleArn: !GetAtt
@@ -62,7 +62,7 @@ Resources:
                 Category: Source
                 Owner: ThirdParty
                 Provider: GitHub
-                Version: 1
+                Version: "1"
               Configuration:
                 Owner: !Ref GitRepoOwner
                 Repo: !Ref GitRepoName
@@ -71,20 +71,6 @@ Resources:
               OutputArtifacts:
                 - Name: SourceOutput
 
-        - Name: ApproveDeployment
-          Actions:
-            -
-              Name: ApproveDeployment
-              ActionTypeId:
-                Category: Approval
-                Owner: AWS
-                Version: 1
-                Provider: Manual
-              Configuration:
-                NotificationArn: !Ref NotificationArn
-                CustomData: !Ref ManualApprovalCustomMessage
-                ExternalEntityLink: !Ref ExternalEntityLink
-
         - Name: Build
           Actions:
             - Name: Build
@@ -92,7 +78,7 @@ Resources:
                 Category: Build
                 Owner: AWS
                 Provider: CodeBuild
-                Version: 1
+                Version: "1"
               Configuration:
                 ProjectName: !Ref CodeBuildProjectName
               InputArtifacts:
