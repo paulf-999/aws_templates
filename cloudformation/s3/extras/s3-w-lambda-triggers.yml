@@ -56,7 +56,7 @@ Resources:
         ZipFile:  |
           #!/usr/bin/env python3
           """
-          Python Version  : 3.7
+          Python Version  : 3.8
           * Name          : s3_event_lambda_trigger.py
           * Description   : Boilerplate s3 event lambda_function script
           * Created       : 26-02-2021

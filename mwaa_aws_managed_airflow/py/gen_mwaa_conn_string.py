@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Python Version  : 3.7
+Python Version  : 3.8
 * Name          : gen_mwaa_conn_string.py
 * Description   : Script to generate the MWAA connection string
 * Created       : 22-05-2021
